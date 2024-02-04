@@ -7,7 +7,7 @@ class TokenService{
   static generateToken = (payload) => {
 
     // Generate Token
-    const access_token = JWT.sign(payload, process.env.JWT_ACCESS_TOKEN, {expiresIn:'30s'});
+    const access_token = JWT.sign(payload, process.env.JWT_ACCESS_TOKEN, {expiresIn:'1m'});
     
     // Refresh Token
     const refresh_token = JWT.sign(payload, process.env.JWT_REFRESH_TOKEN, {expiresIn:'60d'});

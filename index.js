@@ -16,7 +16,12 @@ const cookieParser = require("cookie-parser");
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors(
+  {
+    credentials: true,
+    origin: ['http://localhost:5173'],
+  }
+));
 
 
 // Import Routers

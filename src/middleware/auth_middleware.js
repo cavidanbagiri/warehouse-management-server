@@ -4,7 +4,6 @@ const TokenService = require( "../utils/jwtToken");
 
 
 const authMiddleware = (req, res, next) => {
-
   try{
     const access_token = req.headers.authorization;
     if(!access_token){
@@ -12,7 +11,6 @@ const authMiddleware = (req, res, next) => {
     }
     
     const token = access_token.split(' ')[1];
-    console.log('token -> : ', token);
     if(!token){
       return next(UserError.UnauthorizedError());
     }
