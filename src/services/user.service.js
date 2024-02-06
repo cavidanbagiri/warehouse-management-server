@@ -75,10 +75,11 @@ class UserServiceLogin{
     const find_user = await this.#findUser(user_data.email, user_data.password);
 
     if(find_user){
-
+      console.log('fint user : ', find_user);
       const find_user_data = {
         id: find_user.id,
-        email: find_user.email
+        email: find_user.email,
+        is_admin: find_user.is_admin
       }
       const tokens = TokenService.generateToken(find_user_data);
 
@@ -154,7 +155,8 @@ class UserServiceRefresh{
 
     const find_user_data = {
       id: find_user.id,
-      email: find_user.email
+      email: find_user.email,
+      is_admin: find_user.is_admin
     }
     const tokens = TokenService.generateToken(find_user_data);
 

@@ -59,7 +59,7 @@ module.exports = {
   async down (queryInterface, Sequelize) {
     await queryInterface.removeConstraint('VariantsValueModels', 'variantsId')
     await queryInterface.removeConstraint('ProductVariantModels', 'variantsValueId')
-    await queryInterface.removeConstraint('CategoryModels', 'categoryId')
+    await queryInterface.removeConstraint('ProductModels', 'categoryId')
     await queryInterface.removeConstraint('ProductModels', 'productVariantId')
     /**
      * Add reverting commands here.
