@@ -5,9 +5,30 @@ const { CategoryModel, VariantsModel } = require('../../models/index');
 class AdminServiceFetchCategoriesAndVariants {
 
   static getCategoriesAndVariants = async  (req, res, next) => {
-    const categories = await CategoryModel.findAll();
-    const variants = await VariantsModel.findAll();
-    return categories;
+    
+    // Fetch All Categories For Alphabetic category_name
+    const categories = await CategoryModel.findAll({
+      attributes:[
+        "id", "category_name"
+      ],
+      order:["category_name"]
+    });
+
+    // Fetch All Categories For Alphabetic variant_name
+    const variants = await VariantsModel.findAll({
+      attributes:[
+        "id", "variant_name"
+      ],
+      order:["variant_name"]
+    });
+
+    // Combine Results
+    const return_data = {
+      categories: [...categories],
+      variants: [...variants]
+    }
+    
+    return return_data;
   }
 
 }
