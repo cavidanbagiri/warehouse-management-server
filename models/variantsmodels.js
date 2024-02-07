@@ -3,25 +3,25 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class VariantsModel extends Model {
+  class VariantsModels extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({VariantsValueModel}) {
-      this.hasMany(VariantsValueModel, {foreignKey: 'variantsId'});
+    static associate({VariantsValueModels}) {
+      this.hasMany(VariantsValueModels, {foreignKey: 'variantsId'});
     }
   }
-  VariantsModel.init({
+  VariantsModels.init({
     variant_name: {
       type: DataTypes.STRING,
       allowNull: false,
     }
   }, {
     sequelize,
-    modelName: 'VariantsModel',
+    modelName: 'VariantsModels',
     tableName: 'VariantsModels',
   });
-  return VariantsModel;
+  return VariantsModels;
 };

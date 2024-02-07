@@ -2,7 +2,8 @@
 const { 
   AdminServiceFetchCategoriesAndVariants,
   AdminServiceCreateCategory,
-  AdminServiceCreateVariant} = require( '../services/admin.service');
+  AdminServiceCreateVariant,
+  AdminServiceCreateProduct} = require( '../services/admin.service');
 
 const tryCatch = require('../utils/tryCatch');
 
@@ -16,7 +17,22 @@ class AdminController {
         return res.send(respond);
       })
       .catch((err)=>{
-        console.log('Fetch Categories Error : ', err);
+        console.log('Fetch Categories and Variants Error : ', err);
+        next(err)
+      })
+    )
+  }
+
+  // Create Product
+  static createProduct = async (req, res, next) => {
+    const data = req.body;
+    tryCatch(
+      await AdminServiceCreateProduct.createProduct(data)
+      .then((respond)=>{
+        return res.send(respond);
+      })
+      .catch((err)=>{
+        console.log('Create product Error : ', err);
         next(err)
       })
     )

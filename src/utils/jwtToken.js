@@ -1,13 +1,13 @@
 
 const JWT = require('jsonwebtoken');
-const { TokenModel } = require('../../models/index.js');
+const { TokenModels } = require('../../models/index.js');
 
 class TokenService{
 
   static generateToken = (payload) => {
 
     // Generate Token
-    const access_token = JWT.sign(payload, process.env.JWT_ACCESS_TOKEN, {expiresIn:'1m'});
+    const access_token = JWT.sign(payload, process.env.JWT_ACCESS_TOKEN, {expiresIn:'30m'});
     
     // Refresh Token
     const refresh_token = JWT.sign(payload, process.env.JWT_REFRESH_TOKEN, {expiresIn:'60d'});
@@ -21,7 +21,7 @@ class TokenService{
   
   static saveToken = async (user_id, refresh_token) => {
   
-    const token_data = await TokenModel.findOne({
+    const token_data = await TokenModels.findOne({
       where:{
         user_id: user_id
       }
@@ -32,7 +32,7 @@ class TokenService{
       return token_data.save();
     }
   
-    const token = await TokenModel.create({
+    const token = await TokenModels.create({
       user_id: user_id,
       refresh_token: refresh_token
     });
@@ -43,7 +43,7 @@ class TokenService{
   }
 
   static async deleteToken(refresh_token){
-    const token_data = await TokenModel.destroy({
+    const token_data = await TokenModels.destroy({
       where:{
         refresh_token: refresh_token
       }
@@ -73,7 +73,7 @@ class TokenService{
 
   static findToken(refresh_token){
 
-    const token_data = TokenModel.findOne({
+    const token_data = TokenModels.findOne({
       where:{
         refresh_token: refresh_token
       }

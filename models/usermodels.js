@@ -3,17 +3,17 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class UserModel extends Model {
+  class UserModels extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({TokenModel}) {
-      this.hasOne(TokenModel, {foreignKey:'user_id'});
+    static associate({TokenModels}) {
+      this.hasOne(TokenModels, {foreignKey:'user_id'});
     }
   }
-  UserModel.init({
+  UserModels.init({
     firstName: {
       type: DataTypes.STRING,
       allowNull: true
@@ -45,7 +45,8 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'UserModel',
+    tableName: 'UserModels',
+    modelName: 'UserModels',
   });
-  return UserModel;
+  return UserModels;
 };

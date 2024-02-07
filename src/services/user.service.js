@@ -1,5 +1,5 @@
 
-const { sequelize, UserModel } = require('../../models'); 
+const { sequelize, UserModels } = require('../../models'); 
 
 const hashPassword = require('../helpers/hash_password');
 
@@ -23,7 +23,7 @@ class UserServiceRegister{
       user_data.password = hashing_password;
       
       // Create New User In Database
-      const new_user = await UserModel.create(user_data);
+      const new_user = await UserModels.create(user_data);
 
       const new_user_data = {
         id: new_user.id,
@@ -52,7 +52,7 @@ class UserServiceRegister{
   // Check User is available
   static async #findUser (user_data) {
 
-    const user = await UserModel.findOne({
+    const user = await UserModels.findOne({
       where:{
         email:user_data.email
       }
@@ -102,7 +102,7 @@ class UserServiceLogin{
   // Find User
   static async #findUser(email, password) {
 
-    const find_user = await UserModel.findOne({
+    const find_user = await UserModels.findOne({
       where:{
         email: email,
       }
@@ -143,11 +143,11 @@ class UserServiceRefresh{
     const user_data = TokenService.validateRefreshToken(refresh_token);
     const token_from_data = TokenService.findToken(refresh_token);
 
-    if(!user_data || !token_from_data ){
+    if(!user_data || !token_from_data ){ 
       throw UserError.UnauthorizedError();
     }
 
-    const find_user = await UserModel.findOne({
+    const find_user = await UserModels.findOne({
       where:{
         id: user_data.id
       }
@@ -176,7 +176,7 @@ class UserServiceFetchUsers{
 
   static async fetchUsers(){
 
-    const users = await UserModel.findAll();
+    const users = await UserModels.findAll();
 
     return users;
   }

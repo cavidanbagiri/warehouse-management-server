@@ -9,18 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      sku: {
-        type: Sequelize.CHAR(10),
-        allowNull: true
-      },
-      price: {
-        type: Sequelize.FLOAT,
-        allowNull: false
-      },
-      stock: {
-        type: Sequelize.INTEGER,
-        allowNull: false
-      },
+      
       variantsValueId: {
         type: Sequelize.INTEGER,
         allowNull: false
