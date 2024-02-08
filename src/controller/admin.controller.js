@@ -17,7 +17,6 @@ class AdminController {
         return res.send(respond);
       })
       .catch((err)=>{
-        console.log('Fetch Categories and Variants Error : ', err);
         next(err)
       })
     )
@@ -25,14 +24,18 @@ class AdminController {
 
   // Create Product
   static createProduct = async (req, res, next) => {
-    const data = req.body;
+    let product_data = JSON.parse(req.body.product_data)
+    let product_variants = JSON.parse(req.body.product_variants)
+    const file = req.file;
+    
+    // console.log('data : ', product_data, ' ', product_variants);
+    
     tryCatch(
-      await AdminServiceCreateProduct.createProduct(data)
+      await AdminServiceCreateProduct.createProduct(product_data, product_variants, file)
       .then((respond)=>{
         return res.send(respond);
       })
       .catch((err)=>{
-        console.log('Create product Error : ', err);
         next(err)
       })
     )
@@ -47,7 +50,6 @@ class AdminController {
         return res.status(200).send(respond);
       })
       .catch((err)=>{
-        console.log('Create Categories Error : ', err);
         next(err)
       })
     )
@@ -63,7 +65,6 @@ class AdminController {
         return res.send(respond);
       })
       .catch((err)=>{
-        console.log('Fetch Categories Error : ', err);
         next(err)
       })
     )

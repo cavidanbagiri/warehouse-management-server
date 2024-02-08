@@ -2,6 +2,8 @@
 
 const { CategoryModels, VariantsModels, VariantsValueModels, ProductModels, ProductVariantModels } = require('../../models/index');
 
+const s3 = require('../storage/storage');
+
 class AdminServiceFetchCategoriesAndVariants {
 
   static getCategoriesAndVariants = async  (req, res, next) => {
@@ -36,15 +38,19 @@ class AdminServiceFetchCategoriesAndVariants {
 class AdminServiceCreateProduct {
   
   // Create Product
-  static async createProduct(data){
+  static async createProduct(product_data, product_variants, file){
 
-    const {product_data, product_variants} = data;
+    // 0 - Upload Image
+    const uploading_images = await this.#uploadImage(file);
     
     // 1 - Create Product
     const product = await this.#createProductInstance(product_data);
 
     // 2 - Create Variant Value Model
     await this.#createVariantValue(product, product_variants);
+
+    // 3 - Create Image Product Field
+
 
     return product;
   }
@@ -77,6 +83,16 @@ class AdminServiceCreateProduct {
       })
     }
   }
+
+  // Upload Image To Bucket and take location
+  static async #uploadImage(file){
+    const upload = await s3.Upload({
+      buffer: file.buffer
+    },
+    '/omarket_images'
+    )
+    return upload.Location;
+  } 
 
 
 }
