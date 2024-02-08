@@ -1,6 +1,6 @@
 
 
-const { CategoryModels, VariantsModels, VariantsValueModels, ProductModels, ProductVariantModels } = require('../../models/index');
+const { CategoryModels, VariantsModels, VariantsValueModels, ProductModels, ProductVariantModels, ProductImagesModels, ImageModels } = require('../../models/index');
 
 const s3 = require('../storage/storage');
 
@@ -49,9 +49,9 @@ class AdminServiceCreateProduct {
     // 2 - Create Variant Value Model
     await this.#createVariantValue(product, product_variants);
 
-    // 3 - Create Image Product Field
-
-
+    // 4 - Create product Image Instance
+    await this.#createProductImageInstance(uploading_images, product);
+ 
     return product;
   }
 
@@ -91,9 +91,26 @@ class AdminServiceCreateProduct {
     },
     '/omarket_images'
     )
-    return upload.Location;
+    const res = await this.#createImageInstance(upload.Location);
+    return res;
   } 
 
+  // Create instance Image to models
+  static async #createImageInstance(image_destination){
+    const res = await ImageModels.create({
+      image_url: image_destination
+    })
+    return res;
+  }
+
+  // Create ProductImage Instance
+  static async #createProductImageInstance(image, product){
+    const res = await ProductImagesModels.create({
+      imgId: image.id,
+      productId: product.id
+    })
+    return res;
+  }
 
 }
 

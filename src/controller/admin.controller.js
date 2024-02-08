@@ -28,14 +28,13 @@ class AdminController {
     let product_variants = JSON.parse(req.body.product_variants)
     const file = req.file;
     
-    // console.log('data : ', product_data, ' ', product_variants);
-    
     tryCatch(
       await AdminServiceCreateProduct.createProduct(product_data, product_variants, file)
       .then((respond)=>{
         return res.send(respond);
       })
       .catch((err)=>{
+        console.log('Create product Error : ', err);
         next(err)
       })
     )
