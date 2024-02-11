@@ -13,7 +13,7 @@ class AdminServiceFetchProduct {
           attributes:['id', 'product_name', 'description', 'sku', 'price', 'stock'],
           include: {
             model: CategoryModels,
-            attributes: ['id','category_name']
+            attributes: [['id', 'category_id'],'category_name']
           }
         });
         resolve(data);
