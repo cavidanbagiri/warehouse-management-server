@@ -1,5 +1,6 @@
 
 const { 
+  AdminServiceFetchProduct,
   AdminServiceFetchCategoriesAndVariants,
   AdminServiceCreateCategory,
   AdminServiceCreateVariant,
@@ -9,15 +10,28 @@ const tryCatch = require('../utils/tryCatch');
 
 class AdminController {
 
+  // Fetch Products
+  static fetchProducts = (req, res, next) => {
+    tryCatch(
+      AdminServiceFetchProduct.fetchProducts()
+      .then((respond)=>{
+        return res.status(200).send(respond);
+      })
+      .catch((err)=>{
+        next(new Error("Fech product error : ", err))
+      })
+    )
+  }
+
   // Fetch Categories and Variants
   static getCategoriesAndVariants = async  (req, res, next) => {
     tryCatch(
       await AdminServiceFetchCategoriesAndVariants.getCategoriesAndVariants()
       .then((respond)=>{
-        return res.send(respond);
+        return res.status(200).send(respond);
       })
       .catch((err)=>{
-        next(err)
+        next(new Error("Fetch categories and variants error : ", err))
       })
     )
   }
@@ -31,11 +45,10 @@ class AdminController {
     tryCatch(
       await AdminServiceCreateProduct.createProduct(product_data, product_variants, file)
       .then((respond)=>{
-        return res.send(respond);
+        return res.status(201).send(respond);
       })
       .catch((err)=>{
-        console.log('Create product Error : ', err);
-        next(err)
+        next(new Error("Create product error : ", err))
       })
     )
   }
@@ -46,10 +59,10 @@ class AdminController {
     tryCatch(
       await AdminServiceCreateCategory.createCategory(data)
       .then((respond)=>{
-        return res.status(200).send(respond);
+        return res.status(201).send(respond);
       })
       .catch((err)=>{
-        next(err)
+        next(new Error("Create category error : ", err))
       })
     )
 
@@ -61,10 +74,10 @@ class AdminController {
     tryCatch(
       await AdminServiceCreateVariant.createVariant(data)
       .then((respond)=>{
-        return res.send(respond);
+        return res.status(201).send(respond);
       })
       .catch((err)=>{
-        next(err)
+        next(new Error("Create Variant error : ", err))
       })
     )
 

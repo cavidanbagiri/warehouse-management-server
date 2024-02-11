@@ -4,6 +4,30 @@ const { CategoryModels, VariantsModels, VariantsValueModels, ProductModels, Prod
 
 const s3 = require('../storage/storage');
 
+class AdminServiceFetchProduct {
+
+  static fetchProducts =  () => {
+    const result = new Promise((resolve, reject) =>{
+      try{
+        const data = ProductModels.findAll({
+          attributes:['id', 'product_name', 'description', 'sku', 'price', 'stock'],
+          include: {
+            model: CategoryModels,
+            attributes: ['id','category_name']
+          }
+        });
+        resolve(data);
+        
+      }
+      catch(err){
+        reject(err);
+      }
+    })
+    return result;
+  }
+
+}
+
 class AdminServiceFetchCategoriesAndVariants {
 
   static getCategoriesAndVariants = async (req, res, next) => {
@@ -150,5 +174,6 @@ module.exports = {
   AdminServiceFetchCategoriesAndVariants,
   AdminServiceCreateCategory,
   AdminServiceCreateVariant,
-  AdminServiceCreateProduct
+  AdminServiceCreateProduct,
+  AdminServiceFetchProduct
 }
