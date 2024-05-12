@@ -17,7 +17,8 @@ class UserController{
     }
     const user_data = {
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      is_admin: req.body.is_admin
     }
     tryCatch(
       UserServiceRegister.userRegister(user_data)
@@ -26,6 +27,7 @@ class UserController{
         return res.status(200).send(respond);
       })
       .catch(err=>{
+        console.log('error is : ', err);
         next(err);
       })
     )
@@ -36,8 +38,9 @@ class UserController{
   static async userLogin(req, res, next) {
     const user_data = {
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
     }
+    console.log('user login func is working');
     tryCatch(
       UserServiceLogin.userLogin(user_data)
       .then((respond)=>{
@@ -60,6 +63,9 @@ class UserController{
 
   // Refresh Token
   static async refresh(req, res, next) {
+    console.log('refresh func is work');
+    console.log('req is : ', req);
+    console.log('req cookies are : ', req.cookies);
     const {refreshToken} = req.cookies;
     const user_data = await UserServiceRefresh.refresh(refreshToken);
     res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});

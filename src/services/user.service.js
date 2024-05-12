@@ -5,10 +5,7 @@ const hashPassword = require('../helpers/hash_password');
 
 const TokenService = require('../utils/jwtToken');
 
-
 const UserError = require('../exceptions/user_exceptions');
-
-
 
 class UserServiceRegister{
 
@@ -24,7 +21,6 @@ class UserServiceRegister{
       
       // Create New User In Database
       const new_user = await UserModels.create(user_data);
-
       const new_user_data = {
         id: new_user.id,
         email: new_user.email
@@ -75,7 +71,6 @@ class UserServiceLogin{
     const find_user = await this.#findUser(user_data.email, user_data.password);
 
     if(find_user){
-      console.log('fint user : ', find_user);
       const find_user_data = {
         id: find_user.id,
         email: find_user.email,
@@ -176,9 +171,7 @@ class UserServiceFetchUsers{
 
   static async fetchUsers(){
 
-    const users = await UserModels.findAll();
-
-    return users;
+    const users = await UserModels.findAll();    return users;
   }
 
 }
