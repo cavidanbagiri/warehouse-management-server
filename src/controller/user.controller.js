@@ -18,7 +18,13 @@ class UserController{
     const user_data = {
       email: req.body.email,
       password: req.body.password,
-      is_admin: req.body.is_admin
+      is_admin: req.body.is_admin,
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      address: req.body.address,
+      phone_number: req.body.phone_number,
+      projectId: req.body.projectId,
+      groupId: req.body.groupId,
     }
     tryCatch(
       UserServiceRegister.userRegister(user_data)
@@ -63,13 +69,16 @@ class UserController{
 
   // Refresh Token
   static async refresh(req, res, next) {
-    console.log('refresh func is work');
-    console.log('req is : ', req);
-    console.log('req cookies are : ', req.cookies);
     const {refreshToken} = req.cookies;
-    const user_data = await UserServiceRefresh.refresh(refreshToken);
-    res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
-    return res.status(200).send(user_data);
+    if(refreshToken){
+
+      const user_data = await UserServiceRefresh.refresh(refreshToken);
+      res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
+      return res.status(200).send(user_data);
+    }
+    else{
+      return res.status(404).send('user not login');
+    }
   }
 
 
@@ -80,7 +89,6 @@ class UserController{
       .then((respond)=>{
         return res.status(200).send(respond);
       }).catch(err=>{
-        console.log('Fetch Users Error -> ', err);
         next(err);
       })
     )
