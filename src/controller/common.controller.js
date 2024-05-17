@@ -1,6 +1,6 @@
 
-const {ProjectService, GroupService, CompanyService} = require('../services/common.service');
-
+const {ProjectService, GroupService, CompanyService, UserService } = require('../services/common.service');
+const tryCatch = require('../utils/tryCatch');
 class CommonController{
     
 
@@ -34,7 +34,21 @@ class CommonController{
     static async fetchCompanies(req, res, next){
         
         tryCatch(
-            await CompanyService.fetchCompanies(company_data)
+            await CompanyService.fetchCompanies()
+            .then((respond)=>{
+                return res.status(201).json(respond);
+            })
+            .catch((err)=>{
+                console.log('fetch company error : ',err);
+                next(err)
+            })
+        )
+    }
+
+    static async fetchUsers(req, res, next){
+        
+        tryCatch(
+            await UserService.fetchUsers()
             .then((respond)=>{
                 return res.status(201).json(respond);
             })

@@ -19,10 +19,10 @@ class UserController{
       email: req.body.email,
       password: req.body.password,
       is_admin: req.body.is_admin,
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       address: req.body.address,
-      phone_number: req.body.phone_number,
+      phoneNumber: req.body.phoneNumber,
       projectId: req.body.projectId,
       groupId: req.body.groupId,
     }

@@ -7,7 +7,11 @@ class ProjectService{
         return response;
     }
     static async fetchProjects(){
-        const response = await ProjectModels.findAll();        
+        const response = await ProjectModels.findAll(
+            {
+                attributes: ['id', 'project_name']
+            }
+        );        
         return response;
     }
 }
@@ -18,7 +22,9 @@ class GroupService{
         return response;
     }
     static async fetchGroups(){
-        const response = await GroupModels.findAll();        
+        const response = await GroupModels.findAll({
+            attributes: ['id', 'group_name']
+        });        
         return response;
     }
 }
@@ -29,7 +35,9 @@ class CompanyService{
         return response;
     }
     static async fetchCompanies(){
-        const response = await CompanyModels.findAll();        
+        const response = await CompanyModels.findAll({
+            attributes: ['id', 'company_name']
+        });        
         return response;
     }
 }

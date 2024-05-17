@@ -80,11 +80,8 @@ class AdminController {
     }
 
     static async fetchCompanies(req, res, next){
-        const company_data = {
-            company_name: req.body.company_name
-        }
         tryCatch(
-            await CompanyService.fetchCompanies(company_data)
+            await CompanyService.fetchCompanies()
             .then((respond)=>{
                 return res.status(201).json(respond);
             })
