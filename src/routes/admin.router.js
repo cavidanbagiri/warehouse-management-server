@@ -10,11 +10,12 @@ const authMiddleware = require('../middleware/auth_middleware');
 const isAdmin = require('../middleware/auth_admin');
 
 
-router.post('/createproject', AdminController.createProject);
-router.get('/projects', AdminController.fetchProjects);
-router.post('/creategroup', AdminController.createGroup);
-router.get('/groups', AdminController.fetchGroups);
-router.post('/createcompany', AdminController.createCompany);
-router.get('/companies', AdminController.fetchCompanies);
+router.post('/createproject', authMiddleware, AdminController.createProject);
+router.get('/projects', authMiddleware, AdminController.fetchProjects);
+router.post('/creategroup', authMiddleware, AdminController.createGroup);
+router.get('/groups', authMiddleware, AdminController.fetchGroups);
+router.post('/createcompany', authMiddleware, AdminController.createCompany);
+router.get('/companies', authMiddleware, AdminController.fetchCompanies);
+router.post('/createordered', AdminController.createOrdered);
 
 module.exports = router;

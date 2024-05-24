@@ -1,6 +1,8 @@
 
 const {ProjectModels, GroupModels, CompanyModels, UserModels } = require ('../../models');
 
+const db = require('../../models/index');
+
 class ProjectService{
     static async fetchProjects(){
         const response = await ProjectModels.findAll(
@@ -32,10 +34,14 @@ class CompanyService{
 
 class UserService{
     static async fetchUsers(){
-        const response = await UserModels.findAll({
-            attributes: ['id', 'firstName', 'lastName']
-        });        
-        return response;
+        const row_query = `select id, 
+        concat(
+            UPPER(LEFT("firstName",1 )),LOWER(SUBSTRING("firstName",2,LENGTH("firstName"))), ' ',
+            UPPER(LEFT("lastName",1 )),LOWER(SUBSTRING("lastName",2,LENGTH("lastName")))
+        ) as username
+        from "UserModels"`;
+        const response = await db.sequelize.query(row_query);
+        return response[0];
     }
 }
 

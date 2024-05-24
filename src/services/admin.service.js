@@ -1,5 +1,6 @@
 
-const {ProjectModels, GroupModels, CompanyModels} = require ('../../models');
+const { where } = require('sequelize');
+const {ProjectModels, GroupModels, CompanyModels, UserModels} = require ('../../models');
 
 class ProjectService{
     static async createProject(data){
@@ -31,8 +32,25 @@ class GroupService{
 
 class CompanyService{
     static async createCompany(data){
-        const response = await CompanyModels.create(data);        
-        return response;
+        
+        const cond = await this.checkCompanyAvailable(data);
+        if(cond){
+            console.log('creating');
+            const response = await CompanyModels.create(data);
+            return response;
+        }
+        else{
+            console.log('availale');
+            return {'Error': 'Company already available'};
+        }
+    }
+    static async checkCompanyAvailable(data){
+        const company = await CompanyModels.findOne({
+            where:{
+                company_name: data.company_name
+            }
+        });
+        return company ? false : true;
     }
     static async fetchCompanies(){
         const response = await CompanyModels.findAll({
@@ -43,10 +61,32 @@ class CompanyService{
 }
 
 
+class OrderedService {
+    static async createOrdered(data){
+        const cond = await this.checkOrderedAvailable(data);
+        if(cond){
+            const response = await UserModels.create(data);
+            return response;
+        }
+        else{
+            return {'Error': 'User already available'};
+        }
+    }
+    static async checkOrderedAvailable(data){
+        const ordered = await UserModels.findOne({
+            where:{
+                firstName: data.firstName
+            }
+        });
+        return ordered ? false : true;
+    }
+}
+
 module.exports = {
   
     ProjectService,
     GroupService,
-    CompanyService
+    CompanyService,
+    OrderedService
 
 }
