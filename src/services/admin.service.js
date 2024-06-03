@@ -1,5 +1,6 @@
 
 const { where } = require('sequelize');
+const { Op } = require("sequelize");
 const {ProjectModels, GroupModels, CompanyModels, UserModels} = require ('../../models');
 
 class ProjectService{
@@ -35,12 +36,10 @@ class CompanyService{
         
         const cond = await this.checkCompanyAvailable(data);
         if(cond){
-            console.log('creating');
             const response = await CompanyModels.create(data);
             return response;
         }
         else{
-            console.log('availale');
             return {'Error': 'Company already available'};
         }
     }
@@ -75,7 +74,7 @@ class OrderedService {
     static async checkOrderedAvailable(data){
         const ordered = await UserModels.findOne({
             where:{
-                firstName: data.firstName
+                [Op.and]: [{firstName: data.firstName}, {lastName: data.lastName}]
             }
         });
         return ordered ? false : true;
