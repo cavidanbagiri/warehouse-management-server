@@ -1,7 +1,7 @@
 
 const { where } = require('sequelize');
 const { Op } = require("sequelize");
-const {ProjectModels, GroupModels, CompanyModels, UserModels} = require ('../../models');
+const {ProjectModels, GroupModels, CompanyModels, UserModels, UserStatusModels} = require ('../../models');
 
 class ProjectService{
     static async createProject(data){
@@ -81,11 +81,19 @@ class OrderedService {
     }
 }
 
+
+class UserStatusService {
+    static async createUserStatus(data){
+        return await UserStatusModels.create(data);
+    }
+}
+
 module.exports = {
   
     ProjectService,
     GroupService,
     CompanyService,
-    OrderedService
+    OrderedService,
+    UserStatusService
 
 }

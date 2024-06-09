@@ -17,5 +17,6 @@ router.get('/groups', authMiddleware, AdminController.fetchGroups);
 router.post('/createcompany', authMiddleware, AdminController.createCompany);
 router.get('/companies', authMiddleware, AdminController.fetchCompanies);
 router.post('/createordered', AdminController.createOrdered);
+router.post('/createuserstatus', AdminController.createUserStatus);
 
 module.exports = router;

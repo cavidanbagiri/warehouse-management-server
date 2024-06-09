@@ -9,10 +9,11 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({TokenModels, ProjectModels, GroupModels, WarehouseModels}) {
+    static associate({TokenModels, ProjectModels, GroupModels, WarehouseModels, UserStatusModels}) {
       this.hasOne(TokenModels, {foreignKey: 'user_id'});
       this.belongsTo(ProjectModels, {foreignKey: 'projectId'});
       this.belongsTo(GroupModels, {foreignKey: 'groupId'});
+      this.belongsTo(UserStatusModels, {foreignKey: 'userStatusId'});
       this.hasOne(WarehouseModels, {foreignKey: 'orderedId'});
     }
   }
@@ -51,6 +52,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     groupId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    userStatusId: {
       type: DataTypes.INTEGER,
       allowNull: true
     },

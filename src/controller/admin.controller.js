@@ -1,7 +1,7 @@
 
 const tryCatch = require('../utils/tryCatch');
 
-const { ProjectService, GroupService, CompanyService, OrderedService } = require('../services/admin.service');
+const { ProjectService, GroupService, CompanyService, OrderedService, UserStatusService} = require('../services/admin.service');
 
 class AdminController {
 
@@ -106,6 +106,19 @@ class AdminController {
                 })
                 .catch((err) => {
                     next(err)
+                })
+        )
+    }
+
+    static async createUserStatus (req, res, next) {
+        const data = req.body;
+        tryCatch(
+            await UserStatusService.createUserStatus(data)
+                .then((respond)=>{
+                    console.log('New user Status created');
+                    return res.status(201).json(respond);
+                }).catch(err=>{
+                    next(err);
                 })
         )
     }

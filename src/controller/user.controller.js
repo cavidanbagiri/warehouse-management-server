@@ -19,12 +19,13 @@ class UserController{
       email: req.body.email,
       password: req.body.password,
       is_admin: req.body.is_admin,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
+      firstName: req.body.firstName.toLowerCase(),
+      lastName: req.body.lastName.toLowerCase(),
       address: req.body.address,
       phoneNumber: req.body.phoneNumber,
       projectId: req.body.projectId,
       groupId: req.body.groupId,
+      userStatusId: req.body.userStatusId,
     }
     tryCatch(
       UserServiceRegister.userRegister(user_data)
@@ -46,7 +47,6 @@ class UserController{
       email: req.body.email,
       password: req.body.password,
     }
-    console.log('user login func is working');
     tryCatch(
       UserServiceLogin.userLogin(user_data)
       .then((respond)=>{
