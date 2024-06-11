@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(GroupModels, {foreignKey: 'groupId'});
       this.belongsTo(UserStatusModels, {foreignKey: 'userStatusId'});
       this.hasOne(WarehouseModels, {foreignKey: 'orderedId'});
+      this.hasOne(WarehouseModels, {foreignKey: 'createdById'});
     }
   }
   UserModels.init({

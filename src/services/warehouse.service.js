@@ -15,6 +15,7 @@ class FetchWarehouseDataService {
         const query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
+        "WarehouseModels".certificate, "WarehouseModels".passport,
         "CompanyModels".company_name,
         "UserModels"."firstName", "UserModels"."lastName"
         from "WarehouseModels" 
@@ -71,6 +72,7 @@ class UpdatePOWarehouseService {
         respond.po = data.po;
         respond.qty = data.qty;
         respond.unit = data.unit;
+        respond.price = data.price
         await respond.save();
         return respond;
     }
@@ -88,6 +90,7 @@ class FilterWarehouseDataService {
         let query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
+        "WarehouseModels".certificate, "WarehouseModels".passport,
         "CompanyModels".company_name,
         "UserModels"."firstName", "UserModels"."lastName"`;
         

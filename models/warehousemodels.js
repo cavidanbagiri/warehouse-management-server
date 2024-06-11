@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(UserModels, {foreignKey: 'orderedId'});
       this.belongsTo(CompanyModels, {foreignKey: 'companyId'});
       this.belongsTo(ProjectModels, {foreignKey: 'projectId'});
+      this.belongsTo(UserModels, {foreignKey: 'createdById'});
     }
   }
   WarehouseModels.init({
@@ -49,6 +50,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    certificate: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false
+    },
+    passport: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false
+    },
     orderedId: {
       allowNull: true,
       type: DataTypes.INTEGER
@@ -58,6 +69,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER
     },
     companyId: {
+      allowNull: true,
+      type: DataTypes.INTEGER
+    },
+    createdById: {
       allowNull: true,
       type: DataTypes.INTEGER
     },

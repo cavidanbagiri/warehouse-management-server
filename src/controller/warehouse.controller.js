@@ -14,9 +14,11 @@ class WarehouseController {
         for(let i of data.table_data){
             i.companyId = data.default_data.companyId;
             i.orderedId = data.default_data.orderedId;
-            i.document = data.default_data.document,
-            i.currency = data.default_data.currency.toLowerCase()
+            i.document = data.default_data.document;
+            i.currency = data.default_data.currency.toLowerCase();
+            i.createdById = req.user.id;
         }
+
         tryCatch(
             await ReceiveWarehouseService.receiveMaterial(data.table_data)
                 .then((respond) => {
@@ -58,12 +60,9 @@ class WarehouseController {
         console.log('update is working');
         const id = req.params.id;
         const data = req.body;
-        console.log('uid : ', id);
-        console.log('data _> : ', data);
         tryCatch(
             await UpdatePOWarehouseService.updatePo(id, data)
             .then((respond) => {
-                console.log('PO Updated : ', respond);
                 return res.status(201).json(respond);
             })
             .catch((err) => {
