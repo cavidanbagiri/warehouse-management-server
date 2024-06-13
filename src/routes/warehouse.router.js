@@ -8,6 +8,7 @@ router.post('/receivewarehouse', authMiddleware, WarehouseController.receiveMate
 router.get('/', authMiddleware, WarehouseController.fetchWarehouseData);
 router.get('/po/:id', authMiddleware, WarehouseController.getPOById);
 router.post('/update/:id', authMiddleware, WarehouseController.updatePo);
+router.post('/updatecertorpassportbyid', authMiddleware, WarehouseController.updateCertOrPassportById);
 router.get('/typecount', authMiddleware, WarehouseController.getTypeCount);
 router.get('/filter', WarehouseController.filterWarehouseData);
 

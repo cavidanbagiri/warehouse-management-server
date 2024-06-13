@@ -30,12 +30,20 @@ class FetchWarehouseDataService {
         let data = [];
         const query = 'select type, count(qty) from "WarehouseModels" group by type';
         const respond = await sequelize.query(query);
+        let total = 0;
         if (respond[0]) {
+            // Sum all counts;
             for (let i of respond[0]) {
-                // data[i.type] = i.count
+                total+=Number(i.count);
+                // data.push(i);
+            }
+            for (let i of respond[0]) {
+                i.count = Math.floor(i.count * 100 / total);
                 data.push(i);
             }
+
         }
+        console.log(total)
         console.log('data : ', data);
         return data;
     }
@@ -76,6 +84,22 @@ class UpdatePOWarehouseService {
         await respond.save();
         return respond;
     }
+
+    static async updateCertOrPassportById(data) {
+        // 1 - Find Item with id
+        const finded_data = await WarehouseModels.findByPk(data.id);
+        if(finded_data) {
+            if(data.key === 'certificate'){
+                finded_data.certificate = !data.value;
+            }
+            else if(data.key === 'passport'){
+                finded_data.passport = !data.value;
+            }
+        }
+        await finded_data.save();
+        return finded_data;
+    }
+
 }
 
 class FilterWarehouseDataService {

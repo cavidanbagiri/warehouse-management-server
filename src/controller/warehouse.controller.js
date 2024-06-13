@@ -57,7 +57,6 @@ class WarehouseController {
     }
 
     static async updatePo(req, res, next){
-        console.log('update is working');
         const id = req.params.id;
         const data = req.body;
         tryCatch(
@@ -68,6 +67,20 @@ class WarehouseController {
             .catch((err) => {
                 next(err);
             })
+        )
+    }
+
+    static async updateCertOrPassportById(req, res, next){
+        console.log('update cert of passport is working');
+        const data = req.body;
+        tryCatch(
+            await UpdatePOWarehouseService.updateCertOrPassportById(data)
+                .then((respond) => {
+                    return res.status(201).json(respond);
+                })
+                .catch((err) => {
+                    next(err);
+                })
         )
     }
 
