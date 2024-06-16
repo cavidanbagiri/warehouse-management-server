@@ -11,6 +11,8 @@ router.post('/update/:id', authMiddleware, WarehouseController.updatePo);
 router.post('/updatecertorpassportbyid', authMiddleware, WarehouseController.updateCertOrPassportById);
 router.get('/typecount', authMiddleware, WarehouseController.getTypeCount);
 router.get('/filter', WarehouseController.filterWarehouseData);
+router.post('/fetchselecteditems', authMiddleware, WarehouseController.fetchSelectedItemsById);
+router.post('/receivetostock', authMiddleware, WarehouseController.receiveToStock);
 
 
 module.exports = router;

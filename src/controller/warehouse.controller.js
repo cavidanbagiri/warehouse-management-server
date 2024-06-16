@@ -2,9 +2,12 @@ const { ReceiveWarehouseService,
     FetchWarehouseDataService,
     FilterWarehouseDataService,
     GetPOWarehouseService,
-    UpdatePOWarehouseService
+    UpdatePOWarehouseService,
+    FetchSelectedItemsService,
+    ReceiveToStockService
 } = require("../services/warehouse.service")
 const tryCatch = require("../utils/tryCatch");
+const {response} = require("express");
 
 
 class WarehouseController {
@@ -100,7 +103,6 @@ class WarehouseController {
 
     static async filterWarehouseData(req, res, next){
         const filtered_query = req.query;
-        console.log('filtered data : ', filtered_query);
         tryCatch(
             await FilterWarehouseDataService.filterWarehouseData(filtered_query)
                 .then((respond) => {
@@ -111,6 +113,38 @@ class WarehouseController {
                     next(err);
                 })
         )
+    }
+
+    static async fetchSelectedItemsById(req, res, next){
+        const data = req.body;
+        tryCatch(
+            await FetchSelectedItemsService.fetchSelectedItemsById(data)
+                .then((respond)=>{
+                    return res.status(200).json(respond);
+                })
+                .catch((err) => {
+                    console.log('get selected items error : ', err);
+                    next(err)
+                })
+        )
+    }
+
+    static async receiveToStock(req, res, next){
+        const data = req.body;
+        // const user = req.user.id;
+        data.userId = req.user.id;
+        setTimeout(async ()=>{
+            tryCatch(
+                await ReceiveToStockService.receiveToStock(data)
+                    .then((respond)=>{
+                        return res.status(200).json(respond);
+                    })
+                    .catch((err) => {
+                        console.log('get selected items error : ', err);
+                        next(err)
+                    })
+            )
+        },3000)
     }
 
 }

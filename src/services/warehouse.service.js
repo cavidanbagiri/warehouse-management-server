@@ -1,10 +1,13 @@
 
-const { WarehouseModels, UserModels, CompanyModels, sequelize } = require('../../models');
+const { WarehouseModels, UserModels, CompanyModels, StockModels, sequelize } = require('../../models');
 
 class ReceiveWarehouseService {
     static async receiveMaterial(data) {
         for (let i of data) {
-            await WarehouseModels.create(i);
+            await WarehouseModels.create({
+                ...i,
+                leftover: i.qty
+            });
         }
         return data;
     }
@@ -15,7 +18,7 @@ class FetchWarehouseDataService {
         const query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
-        "WarehouseModels".certificate, "WarehouseModels".passport,
+        "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
         "CompanyModels".company_name,
         "UserModels"."firstName", "UserModels"."lastName"
         from "WarehouseModels" 
@@ -114,7 +117,7 @@ class FilterWarehouseDataService {
         let query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
-        "WarehouseModels".certificate, "WarehouseModels".passport,
+        "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover, 
         "CompanyModels".company_name,
         "UserModels"."firstName", "UserModels"."lastName"`;
         
@@ -149,10 +152,65 @@ class FilterWarehouseDataService {
 
 }
 
+class FetchSelectedItemsService {
+    static async fetchSelectedItemsById(data) {
+        let selected_datas = [];
+        for(let i of data){
+            const result = await this.getPoWithId(i);
+            selected_datas.push(result);
+        }
+        return selected_datas;
+    }
+
+    // Find PO with id;
+    static async getPoWithId(id) {
+        const result = await WarehouseModels.findByPk(id);
+        return result;
+    }
+
+}
+
+class ReceiveToStockService{
+    static async receiveToStock(data) {
+        console.log('coming data : ', data)
+        for(let i of data){
+            const result = await this.getPoWithIdAndUpdate(i.id);
+            if(result.leftover - Number(i.entered_amount) >= 0){
+                result.leftover = result.leftover - Number(i.entered_amount);
+                const new_stock = await StockModels.create({
+                    qty: i.entered_amount,
+                    stock: i.entered_amount,
+                    price: i.price,
+                    serial_number: i.serial_number,
+                    material_id: i.material_id,
+                    warehouseId: i.id,
+                    createdById: data.userId
+                })
+                await result.save();
+            }
+            else{
+                console.log('enter else');
+            }
+        }
+        return 'receiveToStock can work';
+    }
+
+    static async getPoWithIdAndUpdate(id) {
+        // Get Item With ID
+        const result = await WarehouseModels.findByPk(id);
+        // Update item With ID
+
+        return result;
+    }
+
+}
+
 module.exports = {
     ReceiveWarehouseService,
     FetchWarehouseDataService,
     GetPOWarehouseService,
     UpdatePOWarehouseService,
-    FilterWarehouseDataService
+    FilterWarehouseDataService,
+    FetchSelectedItemsService,
+    ReceiveToStockService
 }

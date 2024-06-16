@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(CompanyModels, {foreignKey: 'companyId'});
       this.belongsTo(ProjectModels, {foreignKey: 'projectId'});
       this.belongsTo(UserModels, {foreignKey: 'createdById'});
-      this.belongsTo(StockModels, {foreignKey: 'warehouseId'});
+      this.hasMany(StockModels, {foreignKey: 'warehouseId'});
     }
   }
   WarehouseModels.init({
@@ -60,6 +60,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: true,
       defaultValue: false
+    },
+    leftover: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+      defaultValue: 0
     },
     orderedId: {
       allowNull: true,

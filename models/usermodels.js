@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(UserStatusModels, {foreignKey: 'userStatusId'});
       this.hasOne(WarehouseModels, {foreignKey: 'orderedId'});
       this.hasOne(WarehouseModels, {foreignKey: 'createdById'});
-      this.hasOne(StockModels, {foreignKey: 'createdById'});
+      this.hasMany(StockModels, {foreignKey: 'createdById'});
     }
   }
   UserModels.init({
