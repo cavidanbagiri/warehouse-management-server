@@ -19,13 +19,13 @@ app.use(cookieParser());
 app.use(cors(
   {
     credentials: true,
-    origin: ['http://localhost:5173'],
+    origin: ['http://localhost:5173', 'http://localhost:4173'],
   }
 ));
 
 
 // Import Routers
-const { UserRouter, AdminRouter, CommonRouter, WarehouseRouter } = require('./src/routes');
+const { UserRouter, AdminRouter, CommonRouter, WarehouseRouter, StockRouter } = require('./src/routes');
 
 // Import Error Handler
 const error_handler = require('./src/middleware/error_handler');
@@ -33,6 +33,7 @@ const error_handler = require('./src/middleware/error_handler');
 app.use('/api/user', UserRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/warehouse', WarehouseRouter);
+app.use('/api/stock', StockRouter);
 app.use('/api', CommonRouter);
 
 

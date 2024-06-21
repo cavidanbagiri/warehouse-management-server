@@ -7,7 +7,6 @@ const { ReceiveWarehouseService,
     ReceiveToStockService
 } = require("../services/warehouse.service")
 const tryCatch = require("../utils/tryCatch");
-const {response} = require("express");
 
 
 class WarehouseController {
@@ -137,7 +136,14 @@ class WarehouseController {
             tryCatch(
                 await ReceiveToStockService.receiveToStock(data)
                     .then((respond)=>{
-                        return res.status(200).json(respond);
+                        if(respond){
+                            console.log('true respond work : ', respond);
+                            return res.status(200).json({msg: 'successfully received to stock'});
+                        }
+                        else{
+                            console.log('false respond work : ', respond);
+                            return res.status(400).json({msg: 'Cant Add Stock'});
+                        }
                     })
                     .catch((err) => {
                         console.log('get selected items error : ', err);

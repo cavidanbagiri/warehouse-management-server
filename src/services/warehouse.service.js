@@ -172,7 +172,37 @@ class FetchSelectedItemsService {
 
 class ReceiveToStockService{
     static async receiveToStock(data) {
-        console.log('coming data : ', data)
+        console.log('coming data : ', data);
+        const result = await this.testEnteringAmount(data);
+        if(result){
+            console.log('if Warehouse service : ', result)
+            await this.updateAndCreateStock(data);
+            return true;
+        }
+        else{
+            console.log('else Warehouse service : ', result)
+            return false;
+        }
+    }
+
+    static async getPoWithIdAndUpdate(id) {
+        const result = await WarehouseModels.findByPk(id);
+        return result;
+    }
+
+    static async testEnteringAmount(data) {
+        let cond = true;
+        for(let i of data){
+            const result = await this.getPoWithIdAndUpdate(i.id);
+            if(result.leftover - Number(i.entered_amount) < 0){
+                cond = false;
+                return cond;
+            }
+        }
+        return cond;
+    }
+
+    static async updateAndCreateStock (data) {
         for(let i of data){
             const result = await this.getPoWithIdAndUpdate(i.id);
             if(result.leftover - Number(i.entered_amount) >= 0){
@@ -192,15 +222,6 @@ class ReceiveToStockService{
                 console.log('enter else');
             }
         }
-        return 'receiveToStock can work';
-    }
-
-    static async getPoWithIdAndUpdate(id) {
-        // Get Item With ID
-        const result = await WarehouseModels.findByPk(id);
-        // Update item With ID
-
-        return result;
     }
 
 }
