@@ -1,5 +1,5 @@
 
-const { StockModels, sequelize} = require('../../models');
+const { StockModels, sequelize, WarehouseModels, CompanyModels, UserModels} = require('../../models');
 
 class FetchStockService {
 
@@ -72,7 +72,81 @@ class FilterStockDataService {
 
 }
 
+class GetByIdService {
+
+    static async getById(id) {
+        const respond = await StockModels.findByPk(id,
+            {
+                attributes: ['id', 'qty', 'stock', 'price', 'serial_number', 'material_id'],
+                include: [
+                    {
+                        model: WarehouseModels,
+                        attributes: [['id', 'warehouse_id'],'material_name', 'unit']
+                    },
+                ]
+            }
+        );
+        console.log(respond);
+        return respond;
+    }
+
+}
+
+class UpdateStockService {
+    static async updateStock (data){
+
+        const result = await StockModels.findByPk(data.id);
+        result.stock = data.stock;
+        result.serial_number = data.serial_number;
+        result.material_id = data.material_id;
+        await result.save();
+        return result;
+
+    }
+}
+
+class ReturnToWarehouseService {
+
+    static async returnToWarehouse(data){
+        // 1 - Find By id;
+        const result = await this.findStockById(data.id);
+
+        // 2 - Check To Stock
+        if(result.stock < data.return_amount ) {
+            console.log('Data cant return ');
+            return false;
+        }
+        else{
+            // 3 - Add To Warehouse The amount
+            const warehouse_data = await WarehouseModels.findByPk(data.warehouse_id);
+            // 4 - Add return amount to leftover amount
+            warehouse_data.leftover = warehouse_data.leftover + Number(data.return_amount);
+            await warehouse_data.save();
+            // 5 - Condition will work
+            if(result.qty === Number(data.return_amount) + (warehouse_data.leftover - Number(data.return_amount)) ){
+                // The Data will delete from StockModel
+                await result.destroy();
+            }
+            else{
+                result.stock -= data.return_amount;
+                await result.save();
+            }
+            return true;
+        }
+
+    }
+
+    static async findStockById (id) {
+        const result = await StockModels.findByPk(id);
+        return result;
+    }
+
+}
+
 module.exports = {
     FetchStockService,
-    FilterStockDataService
+    FilterStockDataService,
+    GetByIdService,
+    UpdateStockService,
+    ReturnToWarehouseService
 };
