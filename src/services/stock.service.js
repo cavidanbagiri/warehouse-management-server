@@ -1,6 +1,8 @@
 
 const { StockModels, sequelize, WarehouseModels, CompanyModels, UserModels} = require('../../models');
 
+const InsufficientError = require('../exceptions/insufficient_exceptions.');
+
 class FetchStockService {
 
     static async getStocks(){
@@ -10,11 +12,13 @@ class FetchStockService {
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId",
         "WarehouseModels"."createdAt" as date,
         "UserModels"."firstName", "UserModels"."lastName",
+        "GroupModels".group_name,
         "CompanyModels".company_name
         from "StockModels" 
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
-        left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId" 
+        left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId"
+        left join "GroupModels" on "UserModels"."groupId" = "GroupModels".id
         order by "StockModels"."createdAt" asc`;
 
         const respond = await sequelize.query(query)
@@ -38,12 +42,14 @@ class FilterStockDataService {
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId",
         "WarehouseModels"."createdAt" as date,
         "UserModels"."firstName", "UserModels"."lastName",
+        "GroupModels".group_name,
         "CompanyModels".company_name`;
 
         query += ` from "StockModels" 
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId" 
+        left join "GroupModels" on "UserModels"."groupId" = "GroupModels".id
         `
 
         let where_query = ' where ';
@@ -113,10 +119,10 @@ class ReturnToWarehouseService {
 
         // 2 - Check To Stock
         if(result.stock < data.return_amount ) {
-            console.log('Data cant return ');
-            return false;
+            throw InsufficientError.inSufficientError();
         }
         else{
+            console.log('this is work');
             // 3 - Add To Warehouse The amount
             const warehouse_data = await WarehouseModels.findByPk(data.warehouse_id);
             // 4 - Add return amount to leftover amount
@@ -131,7 +137,7 @@ class ReturnToWarehouseService {
                 result.stock -= data.return_amount;
                 await result.save();
             }
-            return true;
+            return result;
         }
 
     }

@@ -44,33 +44,37 @@ class StockController {
 
     static async updateStock(req, res, next){
         const data = req.body;
-        tryCatch(
-            await UpdateStockService.updateStock(data)
-                .then((respond) => {
-                    return res.status(201).json({msg: 'Successfully Updated'});
-                }).catch((err)=>{{
-                    console.error(err.message)
-                    next(err);
-                }})
-        )
+        setTimeout(async ()=>{
+            tryCatch(
+                await UpdateStockService.updateStock(data)
+                    .then((respond) => {
+                        return res.status(201).json({msg: 'Successfully Updated'});
+                    }).catch((err)=>{{
+                        console.error(err.message)
+                        next(err);
+                    }})
+            )
+        },2000)
     }
 
     static async returnToWarehouse(req, res, next){
         const data = req.body;
-        tryCatch(
-            await ReturnToWarehouseService.returnToWarehouse(data)
-                .then((respond) => {
-                    if(respond){
+        setTimeout(async ()=>{
+            tryCatch(
+                await ReturnToWarehouseService.returnToWarehouse(data)
+                    .then((respond) => {
+                        // if(respond){
                         return res.status(201).json({msg: 'Successfully Updated'});
-                    }
-                    else{
-                        return res.status(401).json({msg: 'Return Amount is not enough'});
-                    }
-                }).catch((err)=>{{
-                    console.error(err.message)
-                    next(err);
-                }})
-        )
+                        // }
+                        // else{
+                        //     return res.status(401).json({msg: 'Return Amount is not enough'});
+                        // }
+                    }).catch((err)=>{{
+                        console.error(err.message)
+                        next(err);
+                    }})
+            )
+        },2000)
     }
 
 }
