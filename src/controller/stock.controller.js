@@ -1,7 +1,7 @@
 
 
 const tryCatch = require("../utils/tryCatch");
-const {FetchStockService, FilterStockDataService, GetByIdService, UpdateStockService, ReturnToWarehouseService} = require("../services/stock.service");
+const { FetchStockService, FilterStockDataService, GetByIdService, UpdateStockService, ReturnToWarehouseService } = require("../services/stock.service");
 
 class StockController {
 
@@ -9,13 +9,13 @@ class StockController {
         tryCatch(
             await FetchStockService.getStocks()
                 .then(stocks => res.status(200).json(stocks))
-                .catch((err)=>{
+                .catch((err) => {
                     next(err);
                 })
         );
     }
 
-    static async filterStockData(req, res, next){
+    static async filterStockData(req, res, next) {
         const filtered_query = req.query;
         tryCatch(
             await FilterStockDataService.filterStockData(filtered_query)
@@ -28,7 +28,7 @@ class StockController {
         )
     }
 
-    static async getById(req, res, next){
+    static async getById(req, res, next) {
         const id = req.params.id;
         tryCatch(
             await GetByIdService.getById(id)
@@ -42,39 +42,38 @@ class StockController {
         )
     }
 
-    static async updateStock(req, res, next){
+    static async updateStock(req, res, next) {
         const data = req.body;
-        setTimeout(async ()=>{
+        setTimeout(async () => {
             tryCatch(
                 await UpdateStockService.updateStock(data)
                     .then((respond) => {
-                        return res.status(201).json({msg: 'Successfully Updated'});
-                    }).catch((err)=>{{
-                        console.error(err.message)
-                        next(err);
-                    }})
+                        return res.status(201).json({ msg: 'Successfully Updated' });
+                    }).catch((err) => {
+                        {
+                            console.error(err.message)
+                            next(err);
+                        }
+                    })
             )
-        },2000)
+        }, 2000)
     }
 
-    static async returnToWarehouse(req, res, next){
+    static async returnToWarehouse(req, res, next) {
         const data = req.body;
-        setTimeout(async ()=>{
+        setTimeout(async () => {
             tryCatch(
                 await ReturnToWarehouseService.returnToWarehouse(data)
                     .then((respond) => {
-                        // if(respond){
-                        return res.status(201).json({msg: 'Successfully Updated'});
-                        // }
-                        // else{
-                        //     return res.status(401).json({msg: 'Return Amount is not enough'});
-                        // }
-                    }).catch((err)=>{{
-                        console.error(err.message)
-                        next(err);
-                    }})
+                        return res.status(201).json({ msg: 'Successfully Updated' });
+                    }).catch((err) => {
+                        {
+                            console.error(err.message)
+                            next(err);
+                        }
+                    })
             )
-        },2000)
+        }, 2000)
     }
 
 }

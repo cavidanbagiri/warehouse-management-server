@@ -114,6 +114,7 @@ class UpdateStockService {
 class ReturnToWarehouseService {
 
     static async returnToWarehouse(data){
+
         // 1 - Find By id;
         const result = await this.findStockById(data.id);
 
@@ -130,6 +131,10 @@ class ReturnToWarehouseService {
             await warehouse_data.save();
             // 5 - Condition will work
             if(result.qty === Number(data.return_amount) + (warehouse_data.leftover - Number(data.return_amount)) ){
+                // The Data will delete from StockModel
+                await result.destroy();
+            }
+            else if(result.qty === Number(data.return_amount)){
                 // The Data will delete from StockModel
                 await result.destroy();
             }
