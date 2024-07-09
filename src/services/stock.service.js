@@ -123,7 +123,6 @@ class ReturnToWarehouseService {
             throw InsufficientError.inSufficientError();
         }
         else{
-            console.log('this is work');
             // 3 - Add To Warehouse The amount
             const warehouse_data = await WarehouseModels.findByPk(data.warehouse_id);
             // 4 - Add return amount to leftover amount

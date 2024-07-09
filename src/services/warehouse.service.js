@@ -3,13 +3,18 @@ const { WarehouseModels, UserModels, CompanyModels, StockModels, sequelize } = r
 
 class ReceiveWarehouseService {
     static async receiveMaterial(data) {
-        for (let i of data) {
-            await WarehouseModels.create({
-                ...i,
-                leftover: i.qty
-            });
+        try {
+            for (let i of data) {
+                await WarehouseModels.create({
+                    ...i,
+                    leftover: i.qty
+                });
+            }
+            return true;
         }
-        return data;
+        catch (err) {
+            return false;
+        }
     }
 }
 
@@ -172,10 +177,8 @@ class FetchSelectedItemsService {
 
 class ReceiveToStockService{
     static async receiveToStock(data) {
-        console.log('coming data : ', data);
         const result = await this.testEnteringAmount(data);
         if(result){
-            console.log('if Warehouse service : ', result)
             await this.updateAndCreateStock(data);
             return true;
         }

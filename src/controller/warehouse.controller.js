@@ -24,7 +24,12 @@ class WarehouseController {
         tryCatch(
             await ReceiveWarehouseService.receiveMaterial(data.table_data)
                 .then((respond) => {
-                    return res.status(201).json(respond);
+                    if(respond){
+                        return res.status(201).json(respond);
+                    }
+                    else{
+                        return res.status(500).json({msg: 'Cant Add Stock'});
+                    }
                 })
                 .catch((err) => {
                     next(err);
@@ -130,7 +135,6 @@ class WarehouseController {
 
     static async receiveToStock(req, res, next){
         const data = req.body;
-        // const user = req.user.id;
         data.userId = req.user.id;
         setTimeout(async ()=>{
             tryCatch(
