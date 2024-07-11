@@ -22,7 +22,7 @@ class CommonController{
         tryCatch(
             await GroupService.fetchGroups()
             .then((respond)=>{
-                return res.status(201).json(respond);
+                return res.status(200).json(respond);
             })
             .catch((err)=>{
                 console.log('fetch groups error : ',err);

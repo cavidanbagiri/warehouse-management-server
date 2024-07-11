@@ -8,8 +8,8 @@ class InsufficientError extends Error {
         this.message = message;
     }
 
-    static inSufficientError() {
-        return new InsufficientError(400, 'Entering Amount Greater Than Stock');
+    static inSufficientError(msg) {
+        return new InsufficientError(400, msg);
     }
 
 }

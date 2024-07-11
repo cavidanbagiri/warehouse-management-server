@@ -1,5 +1,5 @@
 
-const { StockModels, sequelize, WarehouseModels, CompanyModels, UserModels} = require('../../models');
+const { StockModels, sequelize, WarehouseModels, CompanyModels, UserModels, AreaModels} = require('../../models');
 
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
@@ -92,11 +92,91 @@ class GetByIdService {
                 ]
             }
         );
-        console.log(respond);
         return respond;
     }
 
 }
+
+class GetDatasByIdsService {
+
+    static async getDataByIds(ids) {
+        console.log('coming ids is : ', ids);
+        const return_data = [];
+        for(let i of ids){
+            const result = await StockModels.findByPk(i, {
+                attributes: ['id', 'qty', 'stock', 'price', 'serial_number', 'material_id'],
+                include: [
+                    {
+                        model: WarehouseModels,
+                        attributes: [['id', 'warehouse_id'],'material_name', 'type', 'unit']
+                    },
+                ]
+            });
+            if(result){
+                return_data.push(result.dataValues);
+            }
+        }
+        return return_data;
+    }
+}
+
+
+class ProvideStockService {
+    static async provideStock(data){    
+
+        //console.log('coming data is : ', data);
+        // let cond = true;
+        for(let i in data.data){
+            const result = await this.findByPK(data.data[i].id, data.data[i].amount, i);
+            // if(!result){
+            //     cond = false;
+            // }
+        }
+        // if(cond){
+            for(let i of data.data){
+                const result = await this.withdrawStock(i.id, i.amount);
+                const result2 = await this.addArea(data);
+            }
+            return true;
+        //}
+        // return 'OK';
+    }
+
+    static async findByPK(id, data, row_num) {
+        const result = await StockModels.findByPk(id);
+        console.log('stock is : ', result.stock);
+        console.log('amount is : ', data);
+        if(result.stock < Number(data) ) {
+            throw InsufficientError.inSufficientError('Entering amount greater than stock amount in '+ Number(Number(row_num) + 1) + 'th row');
+            // return false;
+        }
+        return true;
+    }
+
+    static async withdrawStock(id, amount) {
+        const result = await StockModels.findByPk(id);
+        result.stock = result.stock - Number(amount);
+        await result.save();
+    }
+
+    static async addArea(data) {
+        for(let i of data.data){
+            const result = await AreaModels.create({
+                qty: i.amount,
+                stockId: i.id,
+                serial_number: i.serial_number,
+                material_id: i.material_id,
+                card_number: data.card_number,
+                username: data.username.trim().toLowerCase(),
+                groupId: data.groupId,
+                createdById: data.createdById
+            })
+        }
+        return true;
+    }
+
+}
+
 
 class UpdateStockService {
     static async updateStock (data){
@@ -120,7 +200,7 @@ class ReturnToWarehouseService {
 
         // 2 - Check To Stock
         if(result.stock < data.return_amount ) {
-            throw InsufficientError.inSufficientError();
+            throw InsufficientError.inSufficientError('Entering amount greater than stock amount');
         }
         else{
             // 3 - Add To Warehouse The amount
@@ -157,6 +237,8 @@ module.exports = {
     FetchStockService,
     FilterStockDataService,
     GetByIdService,
+    GetDatasByIdsService,
     UpdateStockService,
-    ReturnToWarehouseService
+    ReturnToWarehouseService,
+    ProvideStockService
 };
