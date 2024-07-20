@@ -13,8 +13,9 @@ const { FetchStockService,
 class StockController {
 
     static async getStocks(req, res, next) {
+        const projectId = req.params.projectId
         tryCatch(
-            await FetchStockService.getStocks()
+            await FetchStockService.getStocks(projectId)
                 .then(stocks => res.status(200).json(stocks))
                 .catch((err) => {
                     next(err);
@@ -24,6 +25,7 @@ class StockController {
 
     static async filterStockData(req, res, next) {
         const filtered_query = req.query;
+        console.log('filter stock data : ', filtered_query);
         tryCatch(
             await FilterStockDataService.filterStockData(filtered_query)
                 .then((respond) => {

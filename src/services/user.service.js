@@ -75,7 +75,8 @@ class UserServiceLogin{
         id: find_user.id,
         email: find_user.email,
         is_admin: find_user.is_admin,
-        status_code: find_user.dataValues.UserStatusModel.dataValues.status_code
+        status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
+        projectId: find_user.projectId,
       }
       const tokens = TokenService.generateToken(find_user_data);
 
@@ -157,7 +158,8 @@ class UserServiceRefresh{
     const find_user_data = {
       id: find_user.id,
       email: find_user.email,
-      is_admin: find_user.is_admin
+      is_admin: find_user.is_admin,
+      projectId: find_user.projectId,
     }
     const tokens = TokenService.generateToken(find_user_data);
 

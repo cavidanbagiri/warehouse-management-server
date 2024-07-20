@@ -36,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    providerType: {
+      type: DataTypes.ENUM('Consumption', 'Debit'),
+      allowNull: true,
+    },
   }, {
     sequelize,
     modelName: 'AreaModels',

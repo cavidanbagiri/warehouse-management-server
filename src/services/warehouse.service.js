@@ -1,5 +1,6 @@
 
 const { WarehouseModels, UserModels, CompanyModels, StockModels, sequelize } = require('../../models');
+const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
 class ReceiveWarehouseService {
     static async receiveMaterial(data) {
@@ -19,7 +20,9 @@ class ReceiveWarehouseService {
 }
 
 class FetchWarehouseDataService {
-    static async fetchWarehouseData() {
+    static async fetchWarehouseData(projectId) {
+        console.log('-------------------------------- l am work');
+        console.log('0000000000000000000', projectId);
         const query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
@@ -29,14 +32,16 @@ class FetchWarehouseDataService {
         from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId" 
+        where "WarehouseModels"."projectId"=${projectId}
         order by "WarehouseModels"."createdAt" asc`
         const respond = await sequelize.query(query)
+        // console.log('respond is : ', respond[0]);
         return respond[0];
     }
 
-    static async getTypeCount() {
+    static async getTypeCount(projectId) {
         let data = [];
-        const query = 'select type, count(qty) from "WarehouseModels" group by type';
+        const query = `select type, count(qty) from "WarehouseModels" where "projectId"=${projectId} group by type`;
         const respond = await sequelize.query(query);
         let total = 0;
         if (respond[0]) {
@@ -80,6 +85,17 @@ class GetPOWarehouseService {
 class UpdatePOWarehouseService {
     static async updatePo(id, data) {
         const respond = await WarehouseModels.findByPk(id);
+        console.log('coming data is : ', data);
+        if(data.qty > respond.qty){
+            respond.leftover += data.qty - respond.qty;
+        }
+        else if(data.qty < respond.qty){
+            if(respond.leftover - (respond.qty - data.qty) >= 0){
+                respond.leftover -= respond.qty - data.qty;
+            } else {
+                throw InsufficientError.inSufficientError('Not enough leftover in stock');
+            }
+        }
         respond.companyId = data.companyId;
         respond.orderedId = data.orderedId;
         respond.document = data.document;
@@ -139,6 +155,9 @@ class FilterWarehouseDataService {
             else if(key === 'createdAt'){
                 where_query += `"WarehouseModels"."${key}"::date='${value}'  and `
             }
+            else if(key === 'projectId'){
+                where_query += `"WarehouseModels"."${key}"='${value}'  and `
+            }
             else{
                 where_query += `"${key}"='${value}'  and `
             }
@@ -151,7 +170,6 @@ class FilterWarehouseDataService {
         }
         query += where_query;
         query += ' order by "WarehouseModels"."createdAt" asc'
-        console.log('qeury : ', query);
         return query;
     }
 

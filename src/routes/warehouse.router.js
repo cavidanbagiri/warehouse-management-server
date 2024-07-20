@@ -4,15 +4,23 @@ const WarehouseController = require('../controller/warehouse.controller');
 const authMiddleware = require("../middleware/auth_middleware");
 const router = express.Router();
 
-router.post('/receivewarehouse', authMiddleware, WarehouseController.receiveMaterial);
-router.get('/', authMiddleware, WarehouseController.fetchWarehouseData);
-router.get('/po/:id', authMiddleware, WarehouseController.getPOById);
-router.post('/update/:id', authMiddleware, WarehouseController.updatePo);
-router.post('/updatecertorpassportbyid', authMiddleware, WarehouseController.updateCertOrPassportById);
-router.get('/typecount', authMiddleware, WarehouseController.getTypeCount);
-router.get('/filter', WarehouseController.filterWarehouseData);
-router.post('/fetchselecteditems', authMiddleware, WarehouseController.fetchSelectedItemsById);
-router.post('/receivetostock', authMiddleware, WarehouseController.receiveToStock);
+router.post('/receivewarehouse', authMiddleware, WarehouseController.receiveMaterial); // Checked
+
+router.get('/fetch/:projectId', authMiddleware, WarehouseController.fetchWarehouseData); // Checked
+
+router.get('/filter', WarehouseController.filterWarehouseData); // Checked
+
+router.get('/po/:id', authMiddleware, WarehouseController.getPOById); // Checked
+
+router.post('/update/:id', authMiddleware, WarehouseController.updatePo); // Checked
+
+router.post('/updatecertorpassportbyid', authMiddleware, WarehouseController.updateCertOrPassportById);  // Checked
+
+router.get('/typecount/:projectId', authMiddleware, WarehouseController.getTypeCount); // Checked
+
+router.post('/fetchselecteditems', authMiddleware, WarehouseController.fetchSelectedItemsById); // Checked
+
+router.post('/receivetostock', authMiddleware, WarehouseController.receiveToStock); // Checked
 
 
 module.exports = router;

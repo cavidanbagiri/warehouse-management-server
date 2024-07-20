@@ -5,8 +5,8 @@ const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
 class FetchStockService {
 
-    static async getStocks(){
-
+    static async getStocks(projectId){
+        console.log('this function is working ----------------------- ');
         const query = `select "StockModels".id, "StockModels".qty, "StockModels".stock, "StockModels".serial_number,"StockModels".material_id,
         "WarehouseModels".document, "WarehouseModels".material_name, "WarehouseModels".type,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId",
@@ -19,6 +19,7 @@ class FetchStockService {
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId"
         left join "GroupModels" on "UserModels"."groupId" = "GroupModels".id
+        where "WarehouseModels"."projectId"=${projectId}
         order by "StockModels"."createdAt" asc`;
 
         const respond = await sequelize.query(query)
@@ -30,6 +31,9 @@ class FetchStockService {
 
 class FilterStockDataService {
     static async filterStockData(data) {
+
+        console.log('Stock Service : ', data);
+
 
         const query = this.convertToSql(data);
         const respond = await sequelize.query(query);
@@ -52,6 +56,8 @@ class FilterStockDataService {
         left join "GroupModels" on "UserModels"."groupId" = "GroupModels".id
         `
 
+        console.log('coming data is : ', data);
+
         let where_query = ' where ';
         for (let [key, value] of Object.entries(data)) {
             if(key === 'material_name'){
@@ -59,6 +65,9 @@ class FilterStockDataService {
             }
             else if(key === 'createdAt'){
                 where_query += `"StockModels"."${key}"::date='${value}'  and `
+            }
+            else if(key === 'projectId'){
+                where_query += `"WarehouseModels"."${key}"='${value}'  and `
             }
             else{
                 where_query += `"${key}"='${value}'  and `
@@ -144,11 +153,8 @@ class ProvideStockService {
 
     static async findByPK(id, data, row_num) {
         const result = await StockModels.findByPk(id);
-        console.log('stock is : ', result.stock);
-        console.log('amount is : ', data);
         if(result.stock < Number(data) ) {
             throw InsufficientError.inSufficientError('Entering amount greater than stock amount in '+ Number(Number(row_num) + 1) + 'th row');
-            // return false;
         }
         return true;
     }
@@ -161,6 +167,7 @@ class ProvideStockService {
 
     static async addArea(data) {
         for(let i of data.data){
+            console.log('i is : ', i);
             const result = await AreaModels.create({
                 qty: i.amount,
                 stockId: i.id,
@@ -169,7 +176,8 @@ class ProvideStockService {
                 card_number: data.card_number,
                 username: data.username.trim().toLowerCase(),
                 groupId: data.groupId,
-                createdById: data.createdById
+                createdById: data.createdById,
+                providerType: i.providerType
             })
         }
         return true;
@@ -219,6 +227,7 @@ class ReturnToWarehouseService {
             }
             else{
                 result.stock -= data.return_amount;
+                result.qty -= data.return_amount;
                 await result.save();
             }
             return result;

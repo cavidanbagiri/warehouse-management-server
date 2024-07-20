@@ -38,12 +38,14 @@ class WarehouseController {
     }
 
     static async fetchWarehouseData(req, res, next){
+        const projectId = req.params.projectId;
         tryCatch(
-            await FetchWarehouseDataService.fetchWarehouseData()
+            await FetchWarehouseDataService.fetchWarehouseData(projectId)
                 .then((respond) => {
                     return res.status(200).json(respond);
                 })
                 .catch((err) => {
+                    console.log('fetch warehouse error : ', err);
                     next(err);
                 })
         )
@@ -54,7 +56,6 @@ class WarehouseController {
         tryCatch(
             await GetPOWarehouseService.getPOById(id)
             .then((respond) => {
-                // console.log('coming respond is : ', respond);
                 return res.status(200).json(respond);
             })
             .catch((err) => {
@@ -72,6 +73,7 @@ class WarehouseController {
                 return res.status(201).json(respond);
             })
             .catch((err) => {
+                console.log('update error : ', err);
                 next(err);
             })
         )
@@ -93,8 +95,9 @@ class WarehouseController {
 
 
     static async getTypeCount(req, res, next){
+        const projectId = req.params.projectId;
         tryCatch(
-            await FetchWarehouseDataService.getTypeCount()
+            await FetchWarehouseDataService.getTypeCount(projectId)
                 .then((respond) => {
                     return res.status(200).json(respond);
                 })
@@ -141,11 +144,9 @@ class WarehouseController {
                 await ReceiveToStockService.receiveToStock(data)
                     .then((respond)=>{
                         if(respond){
-                            console.log('true respond work : ', respond);
                             return res.status(200).json({msg: 'successfully received to stock'});
                         }
                         else{
-                            console.log('false respond work : ', respond);
                             return res.status(400).json({msg: 'Cant Add Stock'});
                         }
                     })
