@@ -31,10 +31,6 @@ class FetchStockService {
 
 class FilterStockDataService {
     static async filterStockData(data) {
-
-        console.log('Stock Service : ', data);
-
-
         const query = this.convertToSql(data);
         const respond = await sequelize.query(query);
         return respond[0];
@@ -81,7 +77,6 @@ class FilterStockDataService {
         }
         query += where_query;
         query += ' order by "StockModels"."createdAt" asc'
-        console.log('stock qeury : ', query);
         return query;
     }
 

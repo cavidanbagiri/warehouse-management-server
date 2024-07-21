@@ -25,7 +25,7 @@ app.use(cors(
 
 
 // Import Routers
-const { UserRouter, AdminRouter, CommonRouter, WarehouseRouter, StockRouter } = require('./src/routes');
+const { UserRouter, AdminRouter, CommonRouter, WarehouseRouter, StockRouter, AreaRouter } = require('./src/routes');
 
 // Import Error Handler
 const error_handler = require('./src/middleware/error_handler');
@@ -34,6 +34,7 @@ app.use('/api/user', UserRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/warehouse', WarehouseRouter);
 app.use('/api/stock', StockRouter);
+app.use('/api/area', AreaRouter);
 app.use('/api', CommonRouter);
 
 

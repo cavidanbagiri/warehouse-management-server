@@ -25,7 +25,6 @@ class StockController {
 
     static async filterStockData(req, res, next) {
         const filtered_query = req.query;
-        console.log('filter stock data : ', filtered_query);
         tryCatch(
             await FilterStockDataService.filterStockData(filtered_query)
                 .then((respond) => {
