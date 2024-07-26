@@ -1,5 +1,5 @@
 
-const { StockModels, sequelize, WarehouseModels, CompanyModels, UserModels, AreaModels} = require('../../models');
+const { StockModels, sequelize, WarehouseModels, CompanyModels, OrderedModels, AreaModels} = require('../../models');
 
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
@@ -11,14 +11,14 @@ class FetchStockService {
         "WarehouseModels".document, "WarehouseModels".material_name, "WarehouseModels".type,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId",
         "WarehouseModels"."createdAt" as date,
-        "UserModels"."firstName", "UserModels"."lastName",
+        "OrderedModels"."firstName", "OrderedModels"."lastName",
         "GroupModels".group_name,
         "CompanyModels".company_name
         from "StockModels" 
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
-        left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId"
-        left join "GroupModels" on "UserModels"."groupId" = "GroupModels".id
+        left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId"
+        left join "GroupModels" on "OrderedModels"."groupId" = "GroupModels".id
         where "WarehouseModels"."projectId"=${projectId}
         order by "StockModels"."createdAt" asc`;
 
@@ -41,15 +41,15 @@ class FilterStockDataService {
         "WarehouseModels".document, "WarehouseModels".material_name, "WarehouseModels".type,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId",
         "WarehouseModels"."createdAt" as date,
-        "UserModels"."firstName", "UserModels"."lastName",
+        "OrderedModels"."firstName", "OrderedModels"."lastName",
         "GroupModels".group_name,
         "CompanyModels".company_name`;
 
         query += ` from "StockModels" 
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
-        left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId" 
-        left join "GroupModels" on "UserModels"."groupId" = "GroupModels".id
+        left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
+        left join "GroupModels" on "OrderedModels"."groupId" = "GroupModels".id
         `
 
         console.log('coming data is : ', data);

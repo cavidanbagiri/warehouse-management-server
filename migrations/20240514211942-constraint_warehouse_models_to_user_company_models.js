@@ -8,7 +8,7 @@ module.exports = {
       type: 'foreign key',
       name: 'orderedId',
       references: {
-        table: 'UserModels',
+        table: 'OrderedModels',
         field: 'id'
       },
       onDelete: 'cascade',

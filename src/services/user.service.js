@@ -21,23 +21,23 @@ class UserServiceRegister{
       
       // Create New User In Database
       const new_user = await UserModels.create(user_data);
-      const new_user_data = {
-        id: new_user.id,
-        email: new_user.email
-      };
+      // const new_user_data = {
+      //   id: new_user.id,
+      //   email: new_user.email
+      // };
 
       // Generate Tokens
-      const tokens = TokenService.generateToken(new_user_data);
+      //const tokens = TokenService.generateToken(new_user_data);
       
       // Save Refresh Token To Database
-      await TokenService.saveToken(new_user.id, tokens.refresh_token);
+      //await TokenService.saveToken(new_user.id, tokens.refresh_token);
 
-      return {
-        access: tokens.access_token,
-        refresh: tokens.refresh_token,
-        user: new_user_data
-      }
-
+      // return {
+      //   access: tokens.access_token,
+      //   refresh: tokens.refresh_token,
+      //   user: new_user_data
+      // }
+      return new_user
     } 
     else{
       throw UserError.UserAlreadyRegisterError(401, 'Email is Already Active')
@@ -119,9 +119,7 @@ class UserServiceLogin{
     else{
       return null;
     }
-
   }
-
 }
 
 // User Logout
@@ -139,6 +137,7 @@ class UserServiceRefresh{
 
   static async refresh(refresh_token){
     if(!refresh_token){
+      console.log('error happen 1');
       throw UserError.UnauthorizedError();
     }
 
@@ -146,8 +145,10 @@ class UserServiceRefresh{
     const token_from_data = TokenService.findToken(refresh_token);
 
     if(!user_data || !token_from_data ){ 
+      console.log('error happen 2');
       throw UserError.UnauthorizedError();
     }
+    console.log('after work');
 
     const find_user = await UserModels.findOne({
       where:{
@@ -155,21 +156,29 @@ class UserServiceRefresh{
       }
     });
 
-    const find_user_data = {
-      id: find_user.id,
-      email: find_user.email,
-      is_admin: find_user.is_admin,
-      projectId: find_user.projectId,
+    if(!find_user){
+      // throw UserError.UserNotFoundError();
+      console.log('error happen 3');
+      throw new Error('User Not Found');
     }
-    const tokens = TokenService.generateToken(find_user_data);
-
-    // Save Refresh Token To Database
-    await TokenService.saveToken(find_user_data.id, tokens.refresh_token);
-
-    return {
-      access: tokens.access_token,
-      refresh: tokens.refresh_token,
-      user: find_user_data
+    else{
+      console.log('error happen 4');
+      const find_user_data = {
+        id: find_user.id,
+        email: find_user.email,
+        is_admin: find_user.is_admin,
+        projectId: find_user.projectId,
+      }
+      const tokens = TokenService.generateToken(find_user_data);
+      
+      // Save Refresh Token To Database
+      await TokenService.saveToken(find_user_data.id, tokens.refresh_token);
+      
+      return {
+        access: tokens.access_token,
+        refresh: tokens.refresh_token,
+        user: find_user_data
+      }
     }
 
   }

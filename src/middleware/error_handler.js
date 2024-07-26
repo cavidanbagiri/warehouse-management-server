@@ -2,9 +2,9 @@
 const UserError = require('../exceptions/user_exceptions');
 
 const error_handler = (err, req, res, next) => {
-  console.log('erorr hangle work');
+  console.log('erorr hangle work : ', err);
   if(err instanceof UserError){
-  console.log('erorr hangle work if');
+  console.log('erorr hangle work if : ', err);
     return res.status(err.status).json({msg: err.message, error:err.error});
   }
   console.log('erorr hangle work then');

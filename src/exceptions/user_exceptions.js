@@ -16,6 +16,7 @@ class UserError extends Error{
   }
 
   static UnauthorizedError(){
+    console.log('here work -------------');
     return new UserError(400, "Unauthorized Error");
   }
 

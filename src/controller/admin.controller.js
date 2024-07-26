@@ -9,6 +9,7 @@ class AdminController {
         const project_data = {
             project_name: req.body.project_name
         }
+       setTimeout(async()=>{
         tryCatch(
             await ProjectService.createProject(project_data)
                 .then((respond) => {
@@ -19,13 +20,14 @@ class AdminController {
                     next(err)
                 })
         )
+       }, 2000)
     }
 
     static async fetchProjects(req, res, next) {
         tryCatch(
             await ProjectService.fetchProjects()
                 .then((respond) => {
-                    return res.status(201).json(respond);
+                    return res.status(200).json(respond);
                 })
                 .catch((err) => {
                     console.log('fetch project error : ', err);
@@ -36,12 +38,12 @@ class AdminController {
 
     static async createGroup(req, res, next) {
         const group_data = {
-            group_name: req.body.group_name.charAt(0).toUpperCase() + req.body.group_name.slice(1),
+            group_name: req.body.group_name.toLowerCase().trim(),
         }
         tryCatch(
             await GroupService.createGroup(group_data)
                 .then((respond) => {
-                    return res.status(201).json({ 'msg': 'Group Created' });
+                    return res.status(201).json({ respond });
                 })
                 .catch((err) => {
                     console.log('create group error : ', err);
@@ -54,7 +56,7 @@ class AdminController {
         tryCatch(
             await GroupService.fetchGroups()
                 .then((respond) => {
-                    return res.status(201).json(respond);
+                    return res.status(200).json(respond);
                 })
                 .catch((err) => {
                     console.log('fetch groups error : ', err);
@@ -95,6 +97,19 @@ class AdminController {
         )
     }
 
+    static async fetchUserStatus(req, res, next) {
+        tryCatch(
+            await UserStatusService.fetchUserStatus()
+                .then((respond) => {
+                    return res.status(200).json(respond);
+                })
+                .catch((err) => {
+                    console.log('fetch user status error : ', err);
+                    next(err)
+                })
+        )
+    }
+
     static async createOrdered (req, res, next) {
         const data = req.body;
         data.firstName = data.firstName.charAt(0).toLowerCase()+data.firstName.slice(1).trim();
@@ -110,12 +125,23 @@ class AdminController {
         )
     }
 
+    static async fetchOrdereds (req, res, next) {
+        tryCatch(
+            await OrderedService.fetchOrdereds()
+                .then((respond) => {
+                    return res.status(200).json(respond);
+                })
+                .catch((err) => {
+                    next(err)
+                })
+        )
+    }
+
     static async createUserStatus (req, res, next) {
         const data = req.body;
         tryCatch(
             await UserStatusService.createUserStatus(data)
                 .then((respond)=>{
-                    console.log('New user Status created');
                     return res.status(201).json(respond);
                 }).catch(err=>{
                     next(err);

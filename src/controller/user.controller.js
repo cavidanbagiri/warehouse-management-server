@@ -30,11 +30,10 @@ class UserController{
     tryCatch(
       UserServiceRegister.userRegister(user_data)
       .then((respond)=>{
-        res.cookie('refreshToken', respond.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
-        return res.status(200).send(respond);
+        // res.cookie('refreshToken', respond.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
+        return res.status(201).send(respond);
       })
       .catch(err=>{
-        console.log('error is : ', err);
         next(err);
       })
     )
@@ -69,9 +68,9 @@ class UserController{
 
   // Refresh Token
   static async refresh(req, res, next) {
+    console.log('user refreh work');
     const {refreshToken} = req.cookies;
     if(refreshToken){
-
       const user_data = await UserServiceRefresh.refresh(refreshToken);
       res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
       return res.status(200).send(user_data);

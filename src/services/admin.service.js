@@ -1,13 +1,25 @@
 
 const { where } = require('sequelize');
 const { Op } = require("sequelize");
-const {ProjectModels, GroupModels, CompanyModels, UserModels, UserStatusModels} = require ('../../models');
+const {ProjectModels, GroupModels, CompanyModels, UserModels, UserStatusModels, OrderedModels} = require ('../../models');
 
 class ProjectService{
     static async createProject(data){
-        const response = await ProjectModels.create(data);        
-        return response;
+        // Check Project Name
+        const project = await ProjectModels.findOne({
+            where:{
+                project_name: data.project_name
+            }
+        })
+        if(project){
+            throw new Error('Project already available');   
+        }
+        else{
+            const response = await ProjectModels.create(data);
+            return response;
+        }
     }
+
     static async fetchProjects(){
         const response = await ProjectModels.findAll(
             {
@@ -20,9 +32,20 @@ class ProjectService{
 
 class GroupService{
     static async createGroup(data){
-        const response = await GroupModels.create(data);        
-        return response;
+        const group = await GroupModels.findOne({
+            where:{
+                group_name: data.group_name
+            }
+        })
+        if(group){
+            throw new Error('Group already available');   
+        }
+        else{
+            const response = await GroupModels.create(data);
+            return response;
+        }
     }
+    
     static async fetchGroups(){
         const response = await GroupModels.findAll({
             attributes: ['id', 'group_name']
@@ -35,12 +58,13 @@ class CompanyService{
     static async createCompany(data){
         
         const cond = await this.checkCompanyAvailable(data);
+        console.log('object : ', cond);
         if(cond){
             const response = await CompanyModels.create(data);
             return response;
         }
         else{
-            return {'Error': 'Company already available'};
+            throw new Error('Company already available');
         }
     }
     static async checkCompanyAvailable(data){
@@ -64,27 +88,44 @@ class OrderedService {
     static async createOrdered(data){
         const cond = await this.checkOrderedAvailable(data);
         if(cond){
-            const response = await UserModels.create(data);
+            console.log('entered if');
+            const response = await OrderedModels.create(data);
             return response;
         }
         else{
-            return {'Error': 'User already available'};
+            console.log('entered else');
+            throw new Error('Ordered already available');
         }
     }
     static async checkOrderedAvailable(data){
-        const ordered = await UserModels.findOne({
+        const ordered = await OrderedModels.findOne({
             where:{
                 [Op.and]: [{firstName: data.firstName}, {lastName: data.lastName}]
             }
         });
         return ordered ? false : true;
     }
+
+    static async fetchOrdereds(){
+        const response = await OrderedModels.findAll({
+            attributes: ['id', 'firstName', 'lastName', 'email', 'projectId']
+        });        
+        return response;
+    }
+
 }
 
 
 class UserStatusService {
     static async createUserStatus(data){
         return await UserStatusModels.create(data);
+    }
+
+    static async fetchUserStatus(){
+        const response = await UserStatusModels.findAll({
+            attributes: ['id', 'status_name', 'status_code']
+        });
+        return response;
     }
 }
 

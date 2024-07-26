@@ -1,5 +1,5 @@
 
-const { WarehouseModels, UserModels, CompanyModels, StockModels, sequelize } = require('../../models');
+const { WarehouseModels, OrderedModels, CompanyModels, StockModels, sequelize } = require('../../models');
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
 class ReceiveWarehouseService {
@@ -21,21 +21,18 @@ class ReceiveWarehouseService {
 
 class FetchWarehouseDataService {
     static async fetchWarehouseData(projectId) {
-        console.log('-------------------------------- l am work');
-        console.log('0000000000000000000', projectId);
         const query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
         "CompanyModels".company_name,
-        "UserModels"."firstName", "UserModels"."lastName"
+        "OrderedModels"."firstName", "OrderedModels"."lastName"
         from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
-        left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId" 
+        left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
         where "WarehouseModels"."projectId"=${projectId}
         order by "WarehouseModels"."createdAt" asc`
         const respond = await sequelize.query(query)
-        // console.log('respond is : ', respond[0]);
         return respond[0];
     }
 
@@ -56,8 +53,6 @@ class FetchWarehouseDataService {
             }
 
         }
-        console.log(total)
-        console.log('data : ', data);
         return data;
     }
 }
@@ -72,12 +67,13 @@ class GetPOWarehouseService {
                         attributes: [['id', 'company_id'],'company_name']
                     },
                     {
-                        model: UserModels,
-                        attributes: [['id', 'user_id'],'firstName', 'lastName']
+                        model: OrderedModels,
+                        attributes: [['id', 'ordered_id'],'firstName', 'lastName']
                     },
                 ]
             }
         );
+        console.log('respond ------------------->>>>>>>>>>>>>>>>>> : ', respond);
         return respond;
     }
 }
@@ -140,11 +136,10 @@ class FilterWarehouseDataService {
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover, 
         "CompanyModels".company_name,
-        "UserModels"."firstName", "UserModels"."lastName"`;
-        
+        "OrderedModels"."firstName", "OrderedModels"."lastName"`;
         query += ` from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
-        left join "UserModels" on "UserModels".id = "WarehouseModels"."orderedId"
+        left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
         `
 
         let where_query = ' where ';

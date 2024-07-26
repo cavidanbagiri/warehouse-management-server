@@ -32,7 +32,7 @@ const error_handler = require('./src/middleware/error_handler');
 
 app.use('/api/user', UserRouter);
 app.use('/api/admin', AdminRouter);
-app.use('/api/warehouse', WarehouseRouter);
+app.use('/api/warehouse', WarehouseRouter); // Checked
 app.use('/api/stock', StockRouter);
 app.use('/api/area', AreaRouter);
 app.use('/api', CommonRouter);
