@@ -1,7 +1,12 @@
 
 const tryCatch = require('../utils/tryCatch');
 
-const { ProjectService, GroupService, CompanyService, OrderedService, UserStatusService} = require('../services/admin.service');
+const { ProjectService, 
+    GroupService, 
+    CompanyService, 
+    OrderedService, 
+    UserStatusService, 
+    MaterialCodeService} = require('../services/admin.service');
 
 class AdminController {
 
@@ -143,6 +148,44 @@ class AdminController {
             await UserStatusService.createUserStatus(data)
                 .then((respond)=>{
                     return res.status(201).json(respond);
+                }).catch(err=>{
+                    next(err);
+                })
+        )
+    }
+
+
+    static async createMaterialCode (req, res, next) {
+        const data = req.body;
+        tryCatch(
+            await MaterialCodeService.createMaterialCode(data)
+                .then((respond)=>{
+                    return res.status(201).json(respond);
+                }).catch(err=>{
+                    next(err);
+                })
+        )
+    }
+
+    
+    static async fetchMaterialCodes (req, res, next) {
+        const data = req.body;
+        tryCatch(
+            await MaterialCodeService.fetchMaterialCodes(data)
+                .then((respond)=>{
+                    return res.status(200).json(respond);
+                }).catch(err=>{
+                    next(err);
+                })
+        )
+    }
+
+    static async filterMaterialCodes (req, res, next) {
+        const query = req.query.value;
+        tryCatch(
+            await MaterialCodeService.filterMaterialCodes(query)
+                .then((respond)=>{
+                    return res.status(200).json(respond);
                 }).catch(err=>{
                     next(err);
                 })

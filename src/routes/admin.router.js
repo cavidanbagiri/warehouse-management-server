@@ -16,13 +16,19 @@ router.get('/projects', authMiddleware, AdminController.fetchProjects); // Check
 router.post('/creategroup', authMiddleware, AdminController.createGroup); // Checked
 router.get('/groups', authMiddleware, AdminController.fetchGroups); // Checked
 
-router.post('/createcompany', authMiddleware, AdminController.createCompany); // Testing
-router.get('/companies', authMiddleware, AdminController.fetchCompanies); // Testing
+router.post('/createcompany', authMiddleware, AdminController.createCompany); // Checked
+router.get('/companies', authMiddleware, AdminController.fetchCompanies); // Checked
 
 router.post('/createordered', authMiddleware, AdminController.createOrdered);
 router.get('/fetchordereds', authMiddleware, AdminController.fetchOrdereds);
 
 router.post('/createuserstatus', authMiddleware, isAdmin, AdminController.createUserStatus);
 router.get('/fetchuserstatus', authMiddleware, AdminController.fetchUserStatus);
+
+router.post('/creatematerialcode', authMiddleware, AdminController.createMaterialCode);
+router.get('/materialcodes', authMiddleware, AdminController.fetchMaterialCodes);
+router.get('/filtermaterialcodes', authMiddleware, AdminController.filterMaterialCodes);
+
+
 
 module.exports = router;

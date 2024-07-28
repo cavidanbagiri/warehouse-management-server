@@ -1,5 +1,5 @@
 
-const { WarehouseModels, OrderedModels, CompanyModels, StockModels, sequelize } = require('../../models');
+const { WarehouseModels, OrderedModels, CompanyModels, StockModels, sequelize, MaterialCodeModels } = require('../../models');
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
 class ReceiveWarehouseService {
@@ -8,7 +8,8 @@ class ReceiveWarehouseService {
             for (let i of data) {
                 await WarehouseModels.create({
                     ...i,
-                    leftover: i.qty
+                    leftover: i.qty,
+                    materialCodeId: i.material_code_id
                 });
             }
             return true;
@@ -26,10 +27,12 @@ class FetchWarehouseDataService {
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
         "CompanyModels".company_name,
-        "OrderedModels"."firstName", "OrderedModels"."lastName"
+        "OrderedModels"."firstName", "OrderedModels"."lastName",
+        "MaterialCodeModels".material_code, "MaterialCodeModels".material_description
         from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
+        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
         where "WarehouseModels"."projectId"=${projectId}
         order by "WarehouseModels"."createdAt" asc`
         const respond = await sequelize.query(query)
@@ -81,7 +84,6 @@ class GetPOWarehouseService {
 class UpdatePOWarehouseService {
     static async updatePo(id, data) {
         const respond = await WarehouseModels.findByPk(id);
-        console.log('coming data is : ', data);
         if(data.qty > respond.qty){
             respond.leftover += data.qty - respond.qty;
         }
@@ -136,10 +138,12 @@ class FilterWarehouseDataService {
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover, 
         "CompanyModels".company_name,
-        "OrderedModels"."firstName", "OrderedModels"."lastName"`;
+        "OrderedModels"."firstName", "OrderedModels"."lastName",
+        "MaterialCodeModels".material_code, "MaterialCodeModels".material_description`;
         query += ` from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
+        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
         `
 
         let where_query = ' where ';

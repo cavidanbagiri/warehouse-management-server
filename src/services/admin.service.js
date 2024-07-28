@@ -1,7 +1,7 @@
 
 const { where } = require('sequelize');
 const { Op } = require("sequelize");
-const {ProjectModels, GroupModels, CompanyModels, UserModels, UserStatusModels, OrderedModels} = require ('../../models');
+const {ProjectModels, GroupModels, CompanyModels, UserModels, UserStatusModels, OrderedModels, MaterialCodeModels} = require ('../../models');
 
 class ProjectService{
     static async createProject(data){
@@ -129,12 +129,49 @@ class UserStatusService {
     }
 }
 
+
+class MaterialCodeService {
+
+    static async createMaterialCode(data){
+        const lastId = await this.getLastId();
+        data.material_code = lastId + 1000000;
+        data.material_description = data.material_description.toLowerCase().trim();
+        return await MaterialCodeModels.create(data);
+    }
+
+    static async getLastId(){
+        const response = await MaterialCodeModels.max('id');
+        return response;
+    }
+
+    static async fetchMaterialCodes(){        
+        const response = await MaterialCodeModels.findAll({
+            attributes: ['id', 'material_description', 'material_code']
+        });
+        return response;
+    }
+    
+    static async filterMaterialCodes(query){        
+        console.log('filtered object query : ', query);
+        const response = await MaterialCodeModels.findAll({
+            attributes: ['id', 'material_description', 'material_code'],
+            where: {
+                [Op.or]: [{material_description: {[Op.iLike]: `%${query}%`}}, {material_code: {[Op.iLike]: `%${query}%`}}],
+            }
+        });
+        console.log('response : ', response);
+        return response;
+    }
+
+}
+
 module.exports = {
   
     ProjectService,
     GroupService,
     CompanyService,
     OrderedService,
-    UserStatusService
+    UserStatusService, 
+    MaterialCodeService
 
 }
