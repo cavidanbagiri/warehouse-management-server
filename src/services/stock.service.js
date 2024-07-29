@@ -11,14 +11,16 @@ class FetchStockService {
         "WarehouseModels".document, "WarehouseModels".material_name, "WarehouseModels".type,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId",
         "WarehouseModels"."createdAt" as date,
-        "OrderedModels"."firstName", "OrderedModels"."lastName",
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
         "GroupModels".group_name,
-        "CompanyModels".company_name
+        "CompanyModels".company_name,
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
         from "StockModels" 
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId"
         left join "GroupModels" on "OrderedModels"."groupId" = "GroupModels".id
+        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
         where "WarehouseModels"."projectId"=${projectId}
         order by "StockModels"."createdAt" asc`;
 
@@ -41,15 +43,18 @@ class FilterStockDataService {
         "WarehouseModels".document, "WarehouseModels".material_name, "WarehouseModels".type,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId",
         "WarehouseModels"."createdAt" as date,
-        "OrderedModels"."firstName", "OrderedModels"."lastName",
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
         "GroupModels".group_name,
-        "CompanyModels".company_name`;
+        "CompanyModels".company_name,
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
+        `;
 
         query += ` from "StockModels" 
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
         left join "GroupModels" on "OrderedModels"."groupId" = "GroupModels".id
+        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
         `
 
         console.log('coming data is : ', data);

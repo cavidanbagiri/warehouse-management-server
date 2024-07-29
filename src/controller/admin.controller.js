@@ -72,10 +72,10 @@ class AdminController {
 
     static async createCompany(req, res, next) {
         const company_data = {
-            email: req.body.email.trim(),
-            phone: req.body.phone.trim(),
-            country: req.body.country.trim(),
-            company_name: req.body.company_name.trim(),
+            email: req.body.email.toLowerCase().trim(),
+            phone: req.body.phone.toLowerCase().trim(),
+            country: req.body.country.toLowerCase().trim(),
+            company_name: req.body.company_name.toLowerCase().trim(),
         }
         tryCatch(
             await CompanyService.createCompany(company_data)
@@ -117,8 +117,8 @@ class AdminController {
 
     static async createOrdered (req, res, next) {
         const data = req.body;
-        data.firstName = data.firstName.charAt(0).toLowerCase()+data.firstName.slice(1).trim();
-        data.lastName = data.lastName.charAt(0).toLowerCase()+data.lastName.slice(1).trim();
+        data.firstName = data.firstName.toLowerCase().trim();
+        data.lastName = data.lastName.toLowerCase().trim();
         tryCatch(
             await OrderedService.createOrdered(data)
                 .then((respond) => {

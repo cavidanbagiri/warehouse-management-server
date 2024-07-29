@@ -1,6 +1,6 @@
 
 const tryCatch  = require('../utils/tryCatch');
-const { FetchAreaService, FilterAreaDataService } = require('../services/area.service');
+const { FetchAreaService, FilterAreaDataService , GetByIdService, UpdateAreaService, ReturnAreaService} = require('../services/area.service');
 
 class AreaController {
     
@@ -27,6 +27,54 @@ class AreaController {
                     next(err);
                 })
         )
+    }
+
+    static async getById(req, res, next) {
+        const id = req.params.id;
+        tryCatch(
+            await GetByIdService.getById(id)
+                .then((respond) => {
+                    return res.status(200).json(respond);
+                })
+                .catch((err) => {
+                    console.log('get type error : ', err);
+                    next(err);
+                })
+        )
+    }
+
+    static async updateArea(req, res, next) {
+        const data = req.body;
+        setTimeout(async () => {
+            tryCatch(
+                await UpdateAreaService.updateArea(data)
+                    .then((respond) => {
+                        return res.status(201).json({ msg: 'Successfully Updated' });
+                    }).catch((err) => {
+                        {
+                            console.error(err.message)
+                            next(err);
+                        }
+                    })
+            )
+        }, 2000)
+    }
+
+    static async returnArea(req, res, next) {
+        const data = req.body;
+        setTimeout(async () => {
+            tryCatch(
+                await ReturnAreaService.returnArea(data)
+                    .then((respond) => {
+                        return res.status(201).json({ msg: 'Successfully Updated' });
+                    }).catch((err) => {
+                        {
+                            console.error(err.message)
+                            next(err);
+                        }
+                    })
+            )
+        }, 2000)
     }
 
 }   

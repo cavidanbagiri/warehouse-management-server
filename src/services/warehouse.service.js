@@ -27,8 +27,8 @@ class FetchWarehouseDataService {
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
         "CompanyModels".company_name,
-        "OrderedModels"."firstName", "OrderedModels"."lastName",
-        "MaterialCodeModels".material_code, "MaterialCodeModels".material_description
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
         from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
@@ -76,7 +76,6 @@ class GetPOWarehouseService {
                 ]
             }
         );
-        console.log('respond ------------------->>>>>>>>>>>>>>>>>> : ', respond);
         return respond;
     }
 }
@@ -138,8 +137,8 @@ class FilterWarehouseDataService {
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover, 
         "CompanyModels".company_name,
-        "OrderedModels"."firstName", "OrderedModels"."lastName",
-        "MaterialCodeModels".material_code, "MaterialCodeModels".material_description`;
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description`;
         query += ` from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 

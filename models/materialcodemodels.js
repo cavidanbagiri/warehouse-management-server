@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       get() {
         return this.getDataValue('material_description').slice(0, 1).toUpperCase() + this.getDataValue('material_description').slice(1);
       }
+
     },
     material_code: {
       type: DataTypes.STRING,

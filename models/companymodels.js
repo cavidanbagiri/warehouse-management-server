@@ -17,7 +17,10 @@ module.exports = (sequelize, DataTypes) => {
   CompanyModels.init({
     company_name: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      get() {
+        return this.getDataValue('company_name').toUpperCase()
+      }
     }
   }, {
     sequelize,

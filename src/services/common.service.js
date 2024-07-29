@@ -35,10 +35,9 @@ class CompanyService{
 class UserService{
     static async fetchUsers(){
         const row_query = `select id, 
-        concat(
-            UPPER(LEFT("firstName",1 )),LOWER(SUBSTRING("firstName",2,LENGTH("firstName"))), ' ',
-            UPPER(LEFT("lastName",1 )),LOWER(SUBSTRING("lastName",2,LENGTH("lastName")))
-        ) as username
+        select id, 
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username
+        from "OrderedModels"
         from "UserModels"`;
         const response = await db.sequelize.query(row_query);
         return response[0];
@@ -49,10 +48,7 @@ class OrderedService{
 
     static async fetchOrdereds(){
         const row_query = `select id, 
-        concat(
-            UPPER(LEFT("firstName",1 )),LOWER(SUBSTRING("firstName",2,LENGTH("firstName"))), ' ',
-            UPPER(LEFT("lastName",1 )),LOWER(SUBSTRING("lastName",2,LENGTH("lastName")))
-        ) as username
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username
         from "OrderedModels"`;
         const response = await db.sequelize.query(row_query);
         return response[0];

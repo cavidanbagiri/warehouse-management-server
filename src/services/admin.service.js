@@ -58,7 +58,6 @@ class CompanyService{
     static async createCompany(data){
         
         const cond = await this.checkCompanyAvailable(data);
-        console.log('object : ', cond);
         if(cond){
             const response = await CompanyModels.create(data);
             return response;
@@ -77,7 +76,9 @@ class CompanyService{
     }
     static async fetchCompanies(){
         const response = await CompanyModels.findAll({
-            attributes: ['id', 'company_name']
+            attributes: ['id', 'company_name'],
+            
+
         });        
         return response;
     }
