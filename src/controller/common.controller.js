@@ -45,8 +45,21 @@ class CommonController{
         )
     }
 
+    static async filterCompanies(req, res, next){
+        const keys = req.query.company_name;
+        tryCatch(
+            await CompanyService.filterCompanies(keys)
+            .then((respond)=>{
+                return res.status(201).json(respond);
+            })
+            .catch((err)=>{
+                console.log('fetch company error : ',err);
+                next(err)
+            })
+        )
+    }
+
     static async fetchUsers(req, res, next){
-        
         tryCatch(
             await UserService.fetchUsers()
             .then((respond)=>{
@@ -63,6 +76,19 @@ class CommonController{
         
         tryCatch(
             await  OrderedService.fetchOrdereds()
+            .then((respond)=>{
+                return res.status(201).json(respond);
+            })
+            .catch((err)=>{
+                console.log('fetch company error : ',err);
+                next(err)
+            })
+        )
+    }
+    static async filterOrdereds(req, res, next){
+        const keys = req.query.ordered;
+        tryCatch(
+            await  OrderedService.filterOrdereds(keys)
             .then((respond)=>{
                 return res.status(201).json(respond);
             })

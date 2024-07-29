@@ -1,6 +1,8 @@
 
 const {ProjectModels, GroupModels, CompanyModels, UserModels } = require ('../../models');
 
+const { Op } = require("sequelize");
+
 const db = require('../../models/index');
 
 class ProjectService{
@@ -30,6 +32,16 @@ class CompanyService{
         });        
         return response;
     }
+
+    static async filterCompanies(query){
+        const response = await CompanyModels.findAll({
+            attributes: ['id', 'company_name'],
+            where: {
+                [Op.or]: [{company_name: {[Op.iLike]: `%${query}%`}}],
+            }
+        });        
+        return response;
+    }
 }
 
 class UserService{
@@ -50,6 +62,16 @@ class OrderedService{
         const row_query = `select id, 
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username
         from "OrderedModels"`;
+        const response = await db.sequelize.query(row_query);
+        return response[0];
+    }
+
+    static async filterOrdereds(query){
+        console.log('query is : ', query);
+        const row_query = `select id, 
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username
+        from "OrderedModels"
+        where INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) ILIKE '%${query}%'`;
         const response = await db.sequelize.query(row_query);
         return response[0];
     }

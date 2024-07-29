@@ -7,7 +7,9 @@ const CommonController = require('../controller/common.controller');
 router.get('/projects', CommonController.fetchProjects);
 router.get('/groups', CommonController.fetchGroups);
 router.get('/companies', CommonController.fetchCompanies);
+router.get('/filtercompanies', CommonController.filterCompanies);
 router.get('/users', CommonController.fetchUsers);
 router.get('/ordereds', CommonController.fetchOrdereds);
+router.get('/filterordereds', CommonController.filterOrdereds);
 
 module.exports = router;

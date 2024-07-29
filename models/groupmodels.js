@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
   GroupModels.init({
     group_name: {
       type: DataTypes.STRING, 
-      allowNull: false
+      allowNull: false,
+      get(){
+        return this.getDataValue('group_name').slice(0,1).toUpperCase() + this.getDataValue('group_name').slice(1).toLowerCase();
+      }
     }
   }, {
     sequelize,

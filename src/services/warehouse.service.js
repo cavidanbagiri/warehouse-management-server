@@ -26,7 +26,7 @@ class FetchWarehouseDataService {
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
-        "CompanyModels".company_name,
+        InitCap("CompanyModels".company_name) as company_name,
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
         "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
         from "WarehouseModels" 
@@ -136,7 +136,7 @@ class FilterWarehouseDataService {
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover, 
-        "CompanyModels".company_name,
+        InitCap("CompanyModels".company_name) as company_name,
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
         "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description`;
         query += ` from "WarehouseModels" 
