@@ -57,8 +57,6 @@ class FilterStockDataService {
         left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
         `
 
-        console.log('coming data is : ', data);
-
         let where_query = ' where ';
         for (let [key, value] of Object.entries(data)) {
             if (key === 'material_name') {

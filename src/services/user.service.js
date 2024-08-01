@@ -40,7 +40,7 @@ class UserServiceRegister{
       return new_user
     } 
     else{
-      throw UserError.UserAlreadyRegisterError(401, 'Email is Already Active')
+      throw UserError.UserAlreadyRegisterError(400, 'Email is Already Active')
     }
 
   }
@@ -137,36 +137,35 @@ class UserServiceRefresh{
 
   static async refresh(refresh_token){
     if(!refresh_token){
-      console.log('error happen 1');
       throw UserError.UnauthorizedError();
     }
 
     const user_data = TokenService.validateRefreshToken(refresh_token);
     const token_from_data = TokenService.findToken(refresh_token);
 
-    if(!user_data || !token_from_data ){ 
-      console.log('error happen 2');
+    if(!user_data || !token_from_data ){
       throw UserError.UnauthorizedError();
     }
-    console.log('after work');
 
     const find_user = await UserModels.findOne({
       where:{
         id: user_data.id
+      },
+      include: {
+        model: UserStatusModels,
+        attributes: ['id', 'status_code', 'status_name']
       }
     });
 
     if(!find_user){
-      // throw UserError.UserNotFoundError();
-      console.log('error happen 3');
       throw new Error('User Not Found');
     }
     else{
-      console.log('error happen 4');
       const find_user_data = {
         id: find_user.id,
         email: find_user.email,
         is_admin: find_user.is_admin,
+        status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
         projectId: find_user.projectId,
       }
       const tokens = TokenService.generateToken(find_user_data);

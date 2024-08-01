@@ -119,6 +119,7 @@ class AdminController {
         const data = req.body;
         data.firstName = data.firstName.toLowerCase().trim();
         data.lastName = data.lastName.toLowerCase().trim();
+        data.email = data.email.toLowerCase().trim();
         tryCatch(
             await OrderedService.createOrdered(data)
                 .then((respond) => {

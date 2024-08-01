@@ -144,10 +144,10 @@ class WarehouseController {
                 await ReceiveToStockService.receiveToStock(data)
                     .then((respond)=>{
                         if(respond){
-                            return res.status(200).json({msg: 'successfully received to stock'});
+                            return res.status(201).json({msg: 'Successfully received to stock'});
                         }
                         else{
-                            return res.status(400).json({msg: 'Cant Add Stock'});
+                            return res.status(400).json({msg: respond});
                         }
                     })
                     .catch((err) => {

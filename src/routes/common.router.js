@@ -3,13 +3,14 @@ const express = require('express');
 const router = express.Router();
 
 const CommonController = require('../controller/common.controller');
+const authMiddleware = require('../middleware/auth_middleware');
 
-router.get('/projects', CommonController.fetchProjects);
-router.get('/groups', CommonController.fetchGroups);
-router.get('/companies', CommonController.fetchCompanies);
-router.get('/filtercompanies', CommonController.filterCompanies);
-router.get('/users', CommonController.fetchUsers);
-router.get('/ordereds', CommonController.fetchOrdereds);
-router.get('/filterordereds', CommonController.filterOrdereds);
+router.get('/projects', authMiddleware, CommonController.fetchProjects);
+router.get('/groups', authMiddleware, CommonController.fetchGroups);
+router.get('/companies', authMiddleware, CommonController.fetchCompanies);
+router.get('/filtercompanies', authMiddleware,CommonController.filterCompanies);
+router.get('/users', authMiddleware, CommonController.fetchUsers);
+router.get('/ordereds', authMiddleware, CommonController.fetchOrdereds);
+router.get('/filterordereds', authMiddleware, CommonController.filterOrdereds);
 
 module.exports = router;

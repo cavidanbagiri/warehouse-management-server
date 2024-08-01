@@ -77,8 +77,6 @@ class CompanyService{
     static async fetchCompanies(){
         const response = await CompanyModels.findAll({
             attributes: ['id', 'company_name'],
-            
-
         });        
         return response;
     }
@@ -89,12 +87,10 @@ class OrderedService {
     static async createOrdered(data){
         const cond = await this.checkOrderedAvailable(data);
         if(cond){
-            console.log('entered if');
             const response = await OrderedModels.create(data);
             return response;
         }
         else{
-            console.log('entered else');
             throw new Error('Ordered already available');
         }
     }
@@ -134,10 +130,25 @@ class UserStatusService {
 class MaterialCodeService {
 
     static async createMaterialCode(data){
+
+        const cond = await this.checkMaterialCodeAvailable(data);
+        if(!cond){
+            throw new Error('Material Code already available');
+        }
         const lastId = await this.getLastId();
         data.material_code = lastId + 1000000;
         data.material_description = data.material_description.toLowerCase().trim();
+        
         return await MaterialCodeModels.create(data);
+    }
+
+    static async checkMaterialCodeAvailable(data){
+        const materialCode = await MaterialCodeModels.findOne({
+            where:{
+                material_description: data.material_description
+            }
+        });
+        return materialCode ? false : true;
     }
 
     static async getLastId(){
@@ -153,14 +164,12 @@ class MaterialCodeService {
     }
     
     static async filterMaterialCodes(query){        
-        console.log('filtered object query : ', query);
         const response = await MaterialCodeModels.findAll({
             attributes: ['id', 'material_description', 'material_code'],
             where: {
                 [Op.or]: [{material_description: {[Op.iLike]: `%${query}%`}}, {material_code: {[Op.iLike]: `%${query}%`}}],
             }
         });
-        console.log('response : ', response);
         return response;
     }
 

@@ -9,7 +9,10 @@ class ReceiveWarehouseService {
                 await WarehouseModels.create({
                     ...i,
                     leftover: i.qty,
-                    materialCodeId: i.material_code_id
+                    materialCodeId: i.material_code_id,
+                    document: i.document.trim(),
+                    material_name: i.material_name.trim(),
+                    po: i.po.trim(),
                 });
             }
             return true;
@@ -125,7 +128,6 @@ class UpdatePOWarehouseService {
 
 class FilterWarehouseDataService {
     static async filterWarehouseData(data) {
-
         const query = this.convertToSql(data);
         const respond = await sequelize.query(query);
         return respond[0];
@@ -199,7 +201,6 @@ class ReceiveToStockService{
             return true;
         }
         else{
-            console.log('else Warehouse service : ', result)
             return false;
         }
     }
@@ -211,11 +212,12 @@ class ReceiveToStockService{
 
     static async testEnteringAmount(data) {
         let cond = true;
+        let count = 0;
         for(let i of data){
+            count++;
             const result = await this.getPoWithIdAndUpdate(i.id);
             if(result.leftover - Number(i.entered_amount) < 0){
-                cond = false;
-                return cond;
+                throw new Error('Not enough stock in '+count+' row');
             }
         }
         return cond;

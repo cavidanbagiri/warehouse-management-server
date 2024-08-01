@@ -10,8 +10,11 @@ const authMiddleware = require('../middleware/auth_middleware');
 const isAdmin = require('../middleware/auth_admin');
 
 
-router.post('/createproject', authMiddleware, isAdmin, AdminController.createProject); // Checked
-router.get('/projects', authMiddleware, AdminController.fetchProjects); // Checked
+router.post('/createproject', authMiddleware, isAdmin, AdminController.createProject);
+router.get('/projects', authMiddleware, AdminController.fetchProjects); 
+
+router.post('/createuserstatus', isAdmin, authMiddleware, AdminController.createUserStatus);
+router.get('/fetchuserstatus', authMiddleware, AdminController.fetchUserStatus);
 
 router.post('/creategroup', authMiddleware, AdminController.createGroup); // Checked
 router.get('/groups', authMiddleware, AdminController.fetchGroups); // Checked
@@ -19,13 +22,11 @@ router.get('/groups', authMiddleware, AdminController.fetchGroups); // Checked
 router.post('/createcompany', authMiddleware, AdminController.createCompany); // Checked
 router.get('/companies', authMiddleware, AdminController.fetchCompanies); // Checked
 
-router.post('/createordered', authMiddleware, AdminController.createOrdered);
-router.get('/fetchordereds', authMiddleware, AdminController.fetchOrdereds);
+router.post('/createordered', authMiddleware, AdminController.createOrdered); // Checked
+router.get('/fetchordereds', authMiddleware, AdminController.fetchOrdereds); // Checked
 
-router.post('/createuserstatus', authMiddleware, isAdmin, AdminController.createUserStatus);
-router.get('/fetchuserstatus', authMiddleware, AdminController.fetchUserStatus);
 
-router.post('/creatematerialcode', authMiddleware, AdminController.createMaterialCode);
+router.post('/creatematerialcode', authMiddleware, AdminController.createMaterialCode); // Testing
 router.get('/materialcodes', authMiddleware, AdminController.fetchMaterialCodes);
 router.get('/filtermaterialcodes', authMiddleware, AdminController.filterMaterialCodes);
 
