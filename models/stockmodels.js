@@ -5,11 +5,12 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class StockModels extends Model {
 
-    static associate({WarehouseModels, UserModels, AreaModels, UnusableMaterialModels}) {
+    static associate({WarehouseModels, UserModels, AreaModels, UnusableMaterialModels, ServiceMaterialModels}) {
       this.belongsTo(WarehouseModels, {foreignKey: 'warehouseId'});
       this.belongsTo(UserModels, {foreignKey: 'createdById'});
       this.hasMany(AreaModels, {foreignKey: 'stockId'});
       this.hasMany(UnusableMaterialModels, {foreignKey: 'stockId'});
+      this.hasMany(ServiceMaterialModels, {foreignKey: 'stockId'});
     }
 
   }

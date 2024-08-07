@@ -8,7 +8,8 @@ const { FetchStockService,
     UpdateStockService,
     ReturnToWarehouseService,
     ProvideStockService,
-    UnusableMaterialService
+    UnusableMaterialService,
+    ServiceMaterialService
 } = require("../services/stock.service");
 
 class StockController {
@@ -115,6 +116,22 @@ class StockController {
             await UnusableMaterialService.setUnusableMaterial(data)
                 .then((respond) => {
                     return res.status(201).json({ msg: 'Successfully Set to unusable', data: respond });
+                }).catch((err) => {
+                    {
+                        next(err);
+                    }
+                })
+        )
+    }
+
+
+    static async setServiceMaterial(req, res, next) {
+        const data = req.body;
+        data.createdById = req.user.id
+        tryCatch(
+            await ServiceMaterialService.setServiceMaterial(data)
+                .then((respond) => {
+                    return res.status(201).json({ msg: 'Successfully Set to service', data: respond });
                 }).catch((err) => {
                     {
                         next(err);

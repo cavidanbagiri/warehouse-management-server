@@ -14,5 +14,6 @@ router.post('/provide', authMiddleware, StockController.provideStock);
 router.post('/update', authMiddleware, StockController.updateStock); // Checked
 router.post('/return', authMiddleware, StockController.returnToWarehouse); // Checked
 router.post('/setunusablematerial', authMiddleware , StockController.setUnusableMaterial); // Checked
+router.post('/setservicematerial', authMiddleware , StockController.setServiceMaterial);
 
 module.exports = router;

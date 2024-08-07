@@ -1,5 +1,5 @@
 
-const { StockModels, sequelize, WarehouseModels,  AreaModels, UnusableMaterialModels } = require('../../models');
+const { StockModels, sequelize, WarehouseModels,  AreaModels, UnusableMaterialModels, ServiceMaterialModels } = require('../../models');
 
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
@@ -300,6 +300,13 @@ class UnusableMaterialService{
 
     static async setUnusableMaterial(data){
 
+        if(!data.amount){
+            throw new Error('Please enter amount');
+        }
+        else if(data.amount < 0){
+            throw new Error('Please enter amount greater than 0');
+        }
+
         const result = await StockModels.findByPk(data.id);
         
         if(result.stock >= Number(data.amount)){
@@ -312,7 +319,6 @@ class UnusableMaterialService{
             })
             await result.save();
             await result2.save();
-            console.log('result is : ', result);
             return result;
         }
         else{
@@ -322,6 +328,34 @@ class UnusableMaterialService{
     }
 }
 
+class ServiceMaterialService{
+    static async setServiceMaterial(data){
+        if(!data.amount){
+            throw new Error('Please enter amount');
+        }
+        else if(data.amount < 0){
+            throw new Error('Please enter amount greater than 0');
+        }
+
+        const result = await StockModels.findByPk(data.id);
+        if(result.stock >= Number(data.amount)){
+            result.stock = result.stock - data.amount;
+            const result2 = await ServiceMaterialModels.create({
+                comments: data.comments,
+                amount: data.amount,
+                stockId: data.id,
+                createdById: data.createdById
+            })
+            await result.save();
+            await result2.save();
+            return result;
+        }
+        else{
+            throw InsufficientError.inSufficientError('Entering amount greater than stock amount');
+        }
+
+    }
+}
 
 module.exports = {
     FetchStockService,
@@ -331,5 +365,6 @@ module.exports = {
     UpdateStockService,
     ReturnToWarehouseService,
     ProvideStockService,
-    UnusableMaterialService
+    UnusableMaterialService,
+    ServiceMaterialService
 };
