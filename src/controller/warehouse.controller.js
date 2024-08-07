@@ -18,18 +18,13 @@ class WarehouseController {
             i.orderedId = data.default_data.orderedId;
             i.document = data.default_data.document;
             i.currency = data.default_data.currency.toLowerCase();
-            i.createdById = req.user.id;
+            i.createdById = req.user.id;            
         }
 
         tryCatch(
             await ReceiveWarehouseService.receiveMaterial(data.table_data)
                 .then((respond) => {
-                    if(respond){
-                        return res.status(201).json(respond);
-                    }
-                    else{
-                        return res.status(500).json({msg: 'Cant Add Stock'});
-                    }
+                    return res.status(201).json({msg: 'Successfully received'});
                 })
                 .catch((err) => {
                     next(err);
@@ -70,7 +65,7 @@ class WarehouseController {
         tryCatch(
             await UpdatePOWarehouseService.updatePo(id, data)
             .then((respond) => {
-                return res.status(201).json(respond);
+                return res.status(201).json({msg:'Succesfully updated ',data:respond});
             })
             .catch((err) => {
                 console.log('update error : ', err);
@@ -80,7 +75,6 @@ class WarehouseController {
     }
 
     static async updateCertOrPassportById(req, res, next){
-        console.log('update cert of passport is working');
         const data = req.body;
         tryCatch(
             await UpdatePOWarehouseService.updateCertOrPassportById(data)
@@ -130,7 +124,6 @@ class WarehouseController {
                     return res.status(200).json(respond);
                 })
                 .catch((err) => {
-                    console.log('get selected items error : ', err);
                     next(err)
                 })
         )
@@ -139,23 +132,15 @@ class WarehouseController {
     static async receiveToStock(req, res, next){
         const data = req.body;
         data.userId = req.user.id;
-        setTimeout(async ()=>{
-            tryCatch(
-                await ReceiveToStockService.receiveToStock(data)
-                    .then((respond)=>{
-                        if(respond){
-                            return res.status(201).json({msg: 'Successfully received to stock'});
-                        }
-                        else{
-                            return res.status(400).json({msg: respond});
-                        }
-                    })
-                    .catch((err) => {
-                        console.log('get selected items error : ', err);
-                        next(err)
-                    })
-            )
-        },3000)
+        tryCatch(
+            await ReceiveToStockService.receiveToStock(data)
+                .then((respond)=>{
+                    return res.status(201).json({msg: 'Successfully received to stock', data: respond});
+                })
+                .catch((err) => {
+                    next(err)
+                })
+        )
     }
 
 }

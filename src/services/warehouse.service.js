@@ -2,9 +2,27 @@
 const { WarehouseModels, OrderedModels, CompanyModels, StockModels, sequelize, MaterialCodeModels } = require('../../models');
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
+class WarehouseQueries {
+    static selectQuery (){
+        const query =  `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
+        "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
+        "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
+        "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
+        InitCap("CompanyModels".company_name) as company_name,
+        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
+        from "WarehouseModels" 
+        left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
+        left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
+        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"`;
+        return query;
+    }
+}
+
 class ReceiveWarehouseService {
     static async receiveMaterial(data) {
         try {
+            await this.checkEnteringData(data);
             for (let i of data) {
                 await WarehouseModels.create({
                     ...i,
@@ -18,24 +36,29 @@ class ReceiveWarehouseService {
             return true;
         }
         catch (err) {
-            return false;
+            throw new Error(err);
         }
     }
+
+    static async checkEnteringData(data) {
+        for (let i of data) {
+            await WarehouseModels.build({
+                ...i,
+                leftover: i.qty,
+                materialCodeId: i.material_code_id,
+                document: i.document.trim(),
+                material_name: i.material_name.trim(),
+                po: i.po.trim(),
+            })
+        }
+    }
+
 }
 
 class FetchWarehouseDataService {
     static async fetchWarehouseData(projectId) {
-        const query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
-        "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
-        "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
-        "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
-        InitCap("CompanyModels".company_name) as company_name,
-        INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
-        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
-        from "WarehouseModels" 
-        left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
-        left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
-        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+        const select_query = WarehouseQueries.selectQuery();
+        const query = `${select_query} 
         where "WarehouseModels"."projectId"=${projectId}
         order by "WarehouseModels"."createdAt" asc`
         const respond = await sequelize.query(query)
@@ -85,6 +108,12 @@ class GetPOWarehouseService {
 
 class UpdatePOWarehouseService {
     static async updatePo(id, data) {
+        if(!data.qty){
+            throw InsufficientError.inSufficientError('Invalid Quantity, Enter a number');
+        }
+        else if(data.qty < 0){
+            throw InsufficientError.inSufficientError('Invalid Quantity');
+        }
         const respond = await WarehouseModels.findByPk(id);
         if(data.qty > respond.qty){
             respond.leftover += data.qty - respond.qty;
@@ -106,7 +135,17 @@ class UpdatePOWarehouseService {
         respond.unit = data.unit;
         respond.price = data.price
         await respond.save();
-        return respond;
+        const result = await UpdatePOWarehouseService.returnUpdateData(id);
+        return result;
+    }
+
+    static async returnUpdateData (id) {
+        const select_query = WarehouseQueries.selectQuery();
+        const query = `${select_query} 
+        where "WarehouseModels".id = ${id}
+        order by "WarehouseModels"."createdAt" asc`
+        const respond = await sequelize.query(query);
+        return respond[0][0];
     }
 
     static async updateCertOrPassportById(data) {
@@ -198,11 +237,10 @@ class ReceiveToStockService{
         const result = await this.testEnteringAmount(data);
         if(result){
             await this.updateAndCreateStock(data);
-            return true;
+            const result = await this.getPostedData(data);
+            return result;
         }
-        else{
-            return false;
-        }
+      
     }
 
     static async getPoWithIdAndUpdate(id) {
@@ -214,6 +252,9 @@ class ReceiveToStockService{
         let cond = true;
         let count = 0;
         for(let i of data){
+            if(!i.entered_amount){
+                throw new Error('Please enter amount in '+count+' row');
+            }
             count++;
             const result = await this.getPoWithIdAndUpdate(i.id);
             if(result.leftover - Number(i.entered_amount) < 0){
@@ -224,25 +265,42 @@ class ReceiveToStockService{
     }
 
     static async updateAndCreateStock (data) {
-        for(let i of data){
-            const result = await this.getPoWithIdAndUpdate(i.id);
-            if(result.leftover - Number(i.entered_amount) >= 0){
-                result.leftover = result.leftover - Number(i.entered_amount);
-                const new_stock = await StockModels.create({
-                    qty: i.entered_amount,
-                    stock: i.entered_amount,
-                    price: i.price,
-                    serial_number: i.serial_number,
-                    material_id: i.material_id,
-                    warehouseId: i.id,
-                    createdById: data.userId
-                })
-                await result.save();
-            }
-            else{
-                console.log('enter else');
+
+        try{
+            for(let i of data){
+                const result = await this.getPoWithIdAndUpdate(i.id);
+                if(result.leftover - Number(i.entered_amount) >= 0){
+                    result.leftover = result.leftover - Number(i.entered_amount);
+                    const new_stock = await StockModels.create({
+                        qty: i.entered_amount,
+                        stock: i.entered_amount,
+                        price: i.price,
+                        serial_number: i.serial_number,
+                        material_id: i.material_id,
+                        warehouseId: i.id,
+                        createdById: data.userId
+                    })
+                    await result.save();
+                }
+                else{
+                    console.log('enter else');
+                }
             }
         }
+        catch(err){
+            throw new Error('Add Stock Data Error : ',err);
+        }
+    }
+
+    static async getPostedData(data) {
+        const select_query = WarehouseQueries.selectQuery();
+        const returned_data = [];
+        for(const i of data){
+            const query = `${select_query} where "WarehouseModels".id = ${i.id}`;
+            const respond = await sequelize.query(query);
+            returned_data.push(respond[0][0]);
+        }
+        return returned_data;
     }
 
 }

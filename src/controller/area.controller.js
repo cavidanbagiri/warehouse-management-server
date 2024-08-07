@@ -45,11 +45,11 @@ class AreaController {
 
     static async updateArea(req, res, next) {
         const data = req.body;
-        setTimeout(async () => {
+        // setTimeout(async () => {
             tryCatch(
                 await UpdateAreaService.updateArea(data)
                     .then((respond) => {
-                        return res.status(201).json({ msg: 'Successfully Updated' });
+                        return res.status(201).json({ msg: 'Successfully Updated', data: respond });
                     }).catch((err) => {
                         {
                             console.error(err.message)
@@ -57,16 +57,16 @@ class AreaController {
                         }
                     })
             )
-        }, 2000)
+        // }, 2000)
     }
 
     static async returnArea(req, res, next) {
         const data = req.body;
-        setTimeout(async () => {
+        // setTimeout(async () => {
             tryCatch(
                 await ReturnAreaService.returnArea(data)
                     .then((respond) => {
-                        return res.status(201).json({ msg: 'Successfully Updated' });
+                        return res.status(201).json({ msg: 'Successfully Updated', data: respond });
                     }).catch((err) => {
                         {
                             console.error(err.message)
@@ -74,7 +74,7 @@ class AreaController {
                         }
                     })
             )
-        }, 2000)
+        // }, 2000)
     }
 
 }   

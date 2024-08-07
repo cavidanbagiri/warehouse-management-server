@@ -6,19 +6,19 @@ const router = express.Router();
 
 router.post('/receivewarehouse', authMiddleware, WarehouseController.receiveMaterial); // Checked
 
-router.get('/fetch/:projectId', authMiddleware, WarehouseController.fetchWarehouseData); // Checked
+router.get('/fetch/:projectId', authMiddleware, WarehouseController.fetchWarehouseData); 
 
-router.get('/filter', WarehouseController.filterWarehouseData); // Checked
+router.get('/filter', WarehouseController.filterWarehouseData); 
 
-router.get('/po/:id', authMiddleware, WarehouseController.getPOById); // Checked
+router.get('/po/:id', authMiddleware, WarehouseController.getPOById); 
 
 router.post('/update/:id', authMiddleware, WarehouseController.updatePo); // Checked
 
-router.post('/updatecertorpassportbyid', authMiddleware, WarehouseController.updateCertOrPassportById);  // Checked
+router.post('/updatecertorpassportbyid', authMiddleware, WarehouseController.updateCertOrPassportById);  
 
-router.get('/typecount/:projectId', authMiddleware, WarehouseController.getTypeCount); // Checked
+router.get('/typecount/:projectId', authMiddleware, WarehouseController.getTypeCount); 
 
-router.post('/fetchselecteditems', authMiddleware, WarehouseController.fetchSelectedItemsById); // Checked
+router.post('/fetchselecteditems', authMiddleware, WarehouseController.fetchSelectedItemsById); 
 
 router.post('/receivetostock', authMiddleware, WarehouseController.receiveToStock); // Checked
 

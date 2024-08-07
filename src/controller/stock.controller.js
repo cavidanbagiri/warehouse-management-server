@@ -7,7 +7,8 @@ const { FetchStockService,
     GetDatasByIdsService,
     UpdateStockService,
     ReturnToWarehouseService,
-    ProvideStockService
+    ProvideStockService,
+    UnusableMaterialService
 } = require("../services/stock.service");
 
 class StockController {
@@ -44,7 +45,6 @@ class StockController {
                     return res.status(200).json(respond);
                 })
                 .catch((err) => {
-                    console.log('get type error : ', err);
                     next(err);
                 })
         )
@@ -58,7 +58,6 @@ class StockController {
                     return res.status(200).json(respond);
                 })
                 .catch((err) => {
-                    console.log('get type error : ', err);
                     next(err);
                 })
         )
@@ -67,51 +66,61 @@ class StockController {
     static async provideStock(req, res, next) {
         const data = req.body;
         data.createdById = req.user.id;
+            tryCatch(
+                await ProvideStockService.provideStock(data)
+                    .then((respond) => {
+                        return res.status(201).json({ msg: 'Successfully Provide', data: respond });
+                    }).catch((err) => {
+                        {
+                            next(err);
+                        }
+                    })
+            )
+        
+    }
+
+    static async updateStock(req, res, next) {
+        const data = req.body;
         tryCatch(
-            await ProvideStockService.provideStock(data)
+            await UpdateStockService.updateStock(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Provide' });
+                    return res.status(201).json({ msg: 'Successfully Updated', data: respond });
                 }).catch((err) => {
                     {
-                        console.error(err.message)
                         next(err);
                     }
                 })
         )
     }
 
-    static async updateStock(req, res, next) {
-        const data = req.body;
-        setTimeout(async () => {
-            tryCatch(
-                await UpdateStockService.updateStock(data)
-                    .then((respond) => {
-                        return res.status(201).json({ msg: 'Successfully Updated' });
-                    }).catch((err) => {
-                        {
-                            console.error(err.message)
-                            next(err);
-                        }
-                    })
-            )
-        }, 2000)
-    }
-
     static async returnToWarehouse(req, res, next) {
         const data = req.body;
-        setTimeout(async () => {
-            tryCatch(
-                await ReturnToWarehouseService.returnToWarehouse(data)
-                    .then((respond) => {
-                        return res.status(201).json({ msg: 'Successfully Updated' });
-                    }).catch((err) => {
-                        {
-                            console.error(err.message)
-                            next(err);
-                        }
-                    })
-            )
-        }, 2000)
+        tryCatch(
+            await ReturnToWarehouseService.returnToWarehouse(data)
+                .then((respond) => {
+                    return res.status(201).json({ msg: 'Successfully Returned', data: respond });
+                }).catch((err) => {
+                    {
+                        next(err);
+                    }
+                })
+        )
+
+    }
+
+    static async setUnusableMaterial(req, res, next) {
+        const data = req.body;
+        data.createdById = req.user.id
+        tryCatch(
+            await UnusableMaterialService.setUnusableMaterial(data)
+                .then((respond) => {
+                    return res.status(201).json({ msg: 'Successfully Set to unusable', data: respond });
+                }).catch((err) => {
+                    {
+                        next(err);
+                    }
+                })
+        )
     }
 
 }

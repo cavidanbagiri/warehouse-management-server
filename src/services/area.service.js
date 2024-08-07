@@ -105,29 +105,37 @@ class UpdateAreaService {
             WHERE "id" = ${data.id}
         `;
         const respond = await sequelize.query(query);
-        return respond[0];
+        const result = await AreaModels.findByPk(data.id);
+        console.log('coming  is : ', result);
+        return result;
     }
 }
 
 class ReturnAreaService{
 
     static async returnArea(data){
+        if(!data.return_amount){
+            throw new Error('Return amount is required');
+        }
+        else if(data.return_amount <= 0){
+            throw new Error('Return amount should be greater than 0');
+        }
         
         const result = await this.getById(data.id);
-        console.log('find result is : ', result);
         if(result.qty < data.return_amount){
             throw new Error('Entering amount is greater than current amount');
         }
         else{
             // 1 - update qty
             result.qty = result.qty - data.return_amount;
-            await result.save();
-
+            
             // 2 - update stock
             await this.findAndUpdateStock(result.stockId, data.return_amount);
+            
+            await result.save();
         }
 
-        return 'OK';
+        return result;
     }
 
     static async getById(id) {
