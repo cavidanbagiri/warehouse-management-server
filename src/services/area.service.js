@@ -1,5 +1,6 @@
 
-const { AreaModels, StockModels, sequelize } = require('../../models');
+const { AreaModels, StockModels, sequelize, UnusableMaterialModels, ServiceMaterialModels }
+ = require('../../models');
 
 
 class FetchAreaService {
@@ -17,6 +18,49 @@ class FetchAreaService {
             LEFT JOIN "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
             where "projectId"=${projectId}`;
 
+        const respond = await sequelize.query(query);
+        return respond[0];
+    }
+
+    static async getUnusableMaterials(projectId) {
+        console.log('unusable work');
+        const query = `
+        select "UnusableMaterialModels".id, "WarehouseModels".material_name,  "WarehouseModels".unit,
+        "WarehouseModels".po, "WarehouseModels".price, UPPER("WarehouseModels".currency) as currency,
+		Initcap("MaterialCodeModels".material_description) as material_description, "MaterialCodeModels".material_code,
+        "StockModels".serial_number, "StockModels".material_id,
+        "UnusableMaterialModels".amount, "UnusableMaterialModels"."createdAt"::date as date,
+        "UnusableMaterialModels".comments,
+        initcap(concat("UserModels"."firstName",' ', "UserModels"."lastName")) as created_by
+        from "UnusableMaterialModels"
+        left join "StockModels" on "StockModels".id = "UnusableMaterialModels"."stockId"
+        left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
+        left join "UserModels" on "UserModels".id = "UnusableMaterialModels"."createdById"
+		left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+        where "WarehouseModels"."projectId" =  ${projectId}`
+
+        const respond = await sequelize.query(query);
+        return respond[0];
+    }
+    
+    
+    static async getServiceMaterials(projectId) {
+        console.log('service work');
+        const query = `
+        select "ServiceMaterialModels".id, "WarehouseModels".material_name,  "WarehouseModels".unit,
+        "WarehouseModels".po, 
+		Initcap("MaterialCodeModels".material_description) as material_description, "MaterialCodeModels".material_code,
+        "StockModels".serial_number, "StockModels".material_id,
+        "ServiceMaterialModels".amount, "ServiceMaterialModels"."createdAt"::date as date,
+        "ServiceMaterialModels".comments,
+        initcap(concat("UserModels"."firstName",' ', "UserModels"."lastName")) as created_by
+        from "ServiceMaterialModels"
+        left join "StockModels" on "StockModels".id = "ServiceMaterialModels"."stockId"
+        left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
+        left join "UserModels" on "UserModels".id = "ServiceMaterialModels"."createdById"
+		left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+        where "WarehouseModels"."projectId" = ${projectId}`
+        
         const respond = await sequelize.query(query);
         return respond[0];
     }
@@ -111,27 +155,27 @@ class UpdateAreaService {
     }
 }
 
-class ReturnAreaService{
+class ReturnAreaService {
 
-    static async returnArea(data){
-        if(!data.return_amount){
+    static async returnArea(data) {
+        if (!data.return_amount) {
             throw new Error('Return amount is required');
         }
-        else if(data.return_amount <= 0){
+        else if (data.return_amount <= 0) {
             throw new Error('Return amount should be greater than 0');
         }
-        
+
         const result = await this.getById(data.id);
-        if(result.qty < data.return_amount){
+        if (result.qty < data.return_amount) {
             throw new Error('Entering amount is greater than current amount');
         }
-        else{
+        else {
             // 1 - update qty
             result.qty = result.qty - data.return_amount;
-            
+
             // 2 - update stock
             await this.findAndUpdateStock(result.stockId, data.return_amount);
-            
+
             await result.save();
         }
 
@@ -150,10 +194,82 @@ class ReturnAreaService{
 
 }
 
+class UnusableServiceReturnToStockService {
+
+    // Return from UnusableMaterialModels
+    static async unusableReturnToStock(data) {
+        if (!data.amount) {
+            throw new Error('Return amount is required');
+        }
+        else if (data.amount <= 0) {
+            throw new Error('Return amount should be greater than 0');
+        }
+
+        else{
+            const result = await this.getById(data.id, UnusableMaterialModels);
+            if(result.amount < data.amount){
+                throw new Error('Entering amount is greater than current amount');
+            }
+            else{
+                // 1 - update amount
+                result.amount = result.amount - data.amount;
+                const result2 = await this.findAndUpdateStock(result.stockId, data.amount);
+
+                await result.save();
+                await result2.save();
+                return result;
+            }
+        }
+
+    }
+
+    // Return from ServiceMaterialModels
+    static async serviceReturnToStock(data) {
+        if (!data.amount) {  
+            throw new Error('Return amount is required');
+        }
+        else if (data.amount <= 0) {
+            throw new Error('Return amount should be greater than 0');
+        }
+
+        else{
+            const result = await this.getById(data.id, ServiceMaterialModels);
+            if(result.amount < data.amount){
+                throw new Error('Entering amount is greater than current amount');
+            }
+            else{
+                // 1 - update amount
+                result.amount = result.amount - data.amount;
+                const result2 = await this.findAndUpdateStock(result.stockId, data.amount);
+
+                await result.save();
+                await result2.save();
+                return result;
+            }
+        }
+
+    }
+
+    
+
+    static async getById(id, table_name) {
+        const result = await table_name.findByPk(id);
+        return result;
+    }
+
+    static async findAndUpdateStock(id, amount) {
+        const result = await StockModels.findByPk(id);
+        result.stock = result.stock + Number(amount);
+        return result;
+    }
+
+}
+
 module.exports = {
     FetchAreaService,
     FilterAreaDataService,
     GetByIdService,
     UpdateAreaService,
-    ReturnAreaService
+    ReturnAreaService,
+    UnusableServiceReturnToStockService
 }
