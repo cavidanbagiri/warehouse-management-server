@@ -1,10 +1,14 @@
 
-const { WarehouseModels, OrderedModels, CompanyModels, StockModels, sequelize, MaterialCodeModels } = require('../../models');
+const { WarehouseModels, OrderedModels, CompanyModels, StockModels, sequelize, CertificateAndPassportModels } = require('../../models');
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
+const s3 = require('../storage/storage');
+
+const path = require('path');
+
 class WarehouseQueries {
-    static selectQuery (){
-        const query =  `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
+    static selectQuery() {
+        const query = `select "WarehouseModels".id,"WarehouseModels".document,"WarehouseModels".material_name,
         "WarehouseModels".type,"WarehouseModels".qty,"WarehouseModels".unit,"WarehouseModels".price,
         "WarehouseModels".currency,"WarehouseModels".po,"WarehouseModels"."orderedId","WarehouseModels"."companyId","WarehouseModels"."createdAt" as date,
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
@@ -73,7 +77,7 @@ class FetchWarehouseDataService {
         if (respond[0]) {
             // Sum all counts;
             for (let i of respond[0]) {
-                total+=Number(i.count);
+                total += Number(i.count);
                 // data.push(i);
             }
             for (let i of respond[0]) {
@@ -93,11 +97,11 @@ class GetPOWarehouseService {
                 include: [
                     {
                         model: CompanyModels,
-                        attributes: [['id', 'company_id'],'company_name']
+                        attributes: [['id', 'company_id'], 'company_name']
                     },
                     {
                         model: OrderedModels,
-                        attributes: [['id', 'ordered_id'],'firstName', 'lastName']
+                        attributes: [['id', 'ordered_id'], 'firstName', 'lastName']
                     },
                 ]
             }
@@ -108,18 +112,18 @@ class GetPOWarehouseService {
 
 class UpdatePOWarehouseService {
     static async updatePo(id, data) {
-        if(!data.qty){
+        if (!data.qty) {
             throw InsufficientError.inSufficientError('Invalid Quantity, Enter a number');
         }
-        else if(data.qty < 0){
+        else if (data.qty < 0) {
             throw InsufficientError.inSufficientError('Invalid Quantity');
         }
         const respond = await WarehouseModels.findByPk(id);
-        if(data.qty > respond.qty){
+        if (data.qty > respond.qty) {
             respond.leftover += data.qty - respond.qty;
         }
-        else if(data.qty < respond.qty){
-            if(respond.leftover - (respond.qty - data.qty) >= 0){
+        else if (data.qty < respond.qty) {
+            if (respond.leftover - (respond.qty - data.qty) >= 0) {
                 respond.leftover -= respond.qty - data.qty;
             } else {
                 throw InsufficientError.inSufficientError('Not enough leftover in stock');
@@ -139,7 +143,7 @@ class UpdatePOWarehouseService {
         return result;
     }
 
-    static async returnUpdateData (id) {
+    static async returnUpdateData(id) {
         const select_query = WarehouseQueries.selectQuery();
         const query = `${select_query} 
         where "WarehouseModels".id = ${id}
@@ -151,11 +155,11 @@ class UpdatePOWarehouseService {
     static async updateCertOrPassportById(data) {
         // 1 - Find Item with id
         const finded_data = await WarehouseModels.findByPk(data.id);
-        if(finded_data) {
-            if(data.key === 'certificate'){
+        if (finded_data) {
+            if (data.key === 'certificate') {
                 finded_data.certificate = !data.value;
             }
-            else if(data.key === 'passport'){
+            else if (data.key === 'passport') {
                 finded_data.passport = !data.value;
             }
         }
@@ -188,23 +192,23 @@ class FilterWarehouseDataService {
 
         let where_query = ' where ';
         for (let [key, value] of Object.entries(data)) {
-            if(key === 'material_name'){
+            if (key === 'material_name') {
                 where_query += `"${key}" ILIKE '%${value}%'  and `
             }
-            else if(key === 'createdAt'){
+            else if (key === 'createdAt') {
                 where_query += `"WarehouseModels"."${key}"::date='${value}'  and `
             }
-            else if(key === 'projectId'){
+            else if (key === 'projectId') {
                 where_query += `"WarehouseModels"."${key}"='${value}'  and `
             }
-            else{
+            else {
                 where_query += `"${key}"='${value}'  and `
             }
         }
-        if(where_query.length > 6){
+        if (where_query.length > 6) {
             where_query = where_query.slice(0, where_query.length - 6);
         }
-        else{
+        else {
             where_query = where_query.slice(0, where_query.length - 4);
         }
         query += where_query;
@@ -217,7 +221,7 @@ class FilterWarehouseDataService {
 class FetchSelectedItemsService {
     static async fetchSelectedItemsById(data) {
         let selected_datas = [];
-        for(let i of data){
+        for (let i of data) {
             const result = await this.getPoWithId(i);
             selected_datas.push(result);
         }
@@ -232,15 +236,15 @@ class FetchSelectedItemsService {
 
 }
 
-class ReceiveToStockService{
+class ReceiveToStockService {
     static async receiveToStock(data) {
         const result = await this.testEnteringAmount(data);
-        if(result){
+        if (result) {
             await this.updateAndCreateStock(data);
             const result = await this.getPostedData(data);
             return result;
         }
-      
+
     }
 
     static async getPoWithIdAndUpdate(id) {
@@ -251,25 +255,25 @@ class ReceiveToStockService{
     static async testEnteringAmount(data) {
         let cond = true;
         let count = 0;
-        for(let i of data){
-            if(!i.entered_amount){
-                throw new Error('Please enter amount in '+count+' row');
+        for (let i of data) {
+            if (!i.entered_amount) {
+                throw new Error('Please enter amount in ' + count + ' row');
             }
             count++;
             const result = await this.getPoWithIdAndUpdate(i.id);
-            if(result.leftover - Number(i.entered_amount) < 0){
-                throw new Error('Not enough stock in '+count+' row');
+            if (result.leftover - Number(i.entered_amount) < 0) {
+                throw new Error('Not enough stock in ' + count + ' row');
             }
         }
         return cond;
     }
 
-    static async updateAndCreateStock (data) {
+    static async updateAndCreateStock(data) {
 
-        try{
-            for(let i of data){
+        try {
+            for (let i of data) {
                 const result = await this.getPoWithIdAndUpdate(i.id);
-                if(result.leftover - Number(i.entered_amount) >= 0){
+                if (result.leftover - Number(i.entered_amount) >= 0) {
                     result.leftover = result.leftover - Number(i.entered_amount);
                     const new_stock = await StockModels.create({
                         qty: i.entered_amount,
@@ -282,20 +286,20 @@ class ReceiveToStockService{
                     })
                     await result.save();
                 }
-                else{
+                else {
                     console.log('enter else');
                 }
             }
         }
-        catch(err){
-            throw new Error('Add Stock Data Error : ',err);
+        catch (err) {
+            throw new Error('Add Stock Data Error : ', err);
         }
     }
 
     static async getPostedData(data) {
         const select_query = WarehouseQueries.selectQuery();
         const returned_data = [];
-        for(const i of data){
+        for (const i of data) {
             const query = `${select_query} where "WarehouseModels".id = ${i.id}`;
             const respond = await sequelize.query(query);
             returned_data.push(respond[0][0]);
@@ -305,6 +309,44 @@ class ReceiveToStockService{
 
 }
 
+class UploadCertificateOrPassportService {
+
+    static async uploadCertificateOrPassport(data, file) {
+
+        let upload = await s3.Upload(
+            {
+                buffer: file.buffer,
+            },
+            '/certificates_and_passports/'
+        );
+
+        const result = await CertificateAndPassportModels.create({
+            filename: file.originalname,
+            location: upload.Location,
+            warehouseId: data.row_id,
+            createdById: data.userId
+        })
+
+        return upload.Location;
+
+    }
+
+}
+
+
+class FetchCertificateOrPassportService {
+    static async fetchCertificatesOrPassports(warehouseId) {
+
+        const result = await CertificateAndPassportModels.findAll({
+            attributes: ['id', 'filename', 'location'],
+            where: {
+                warehouseId
+            }
+        })
+        return result;
+    }
+}
+
 module.exports = {
     ReceiveWarehouseService,
     FetchWarehouseDataService,
@@ -312,5 +354,7 @@ module.exports = {
     UpdatePOWarehouseService,
     FilterWarehouseDataService,
     FetchSelectedItemsService,
-    ReceiveToStockService
+    ReceiveToStockService,
+    UploadCertificateOrPassportService,
+    FetchCertificateOrPassportService
 }

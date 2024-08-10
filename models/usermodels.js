@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({TokenModels, ProjectModels, GroupModels, WarehouseModels, UserStatusModels, StockModels, AreaModels, UnusableMaterialModels, ServiceMaterialModels}) {
+    static associate({TokenModels, ProjectModels, GroupModels, WarehouseModels, UserStatusModels, StockModels, AreaModels, UnusableMaterialModels, ServiceMaterialModels, CertificateAndPassportModels}) {
       this.hasOne(TokenModels, {foreignKey: 'user_id'});
       this.belongsTo(ProjectModels, {foreignKey: 'projectId'});
       this.belongsTo(GroupModels, {foreignKey: 'groupId'});
@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(AreaModels, {foreignKey: 'createdById'});
       this.hasMany(UnusableMaterialModels, {foreignKey: 'createdById'});
       this.hasMany(ServiceMaterialModels, {foreignKey: 'createdById'});
+      this.hasMany(CertificateAndPassportModels, {foreignKey: 'createdById'});
     }
   }
   UserModels.init({

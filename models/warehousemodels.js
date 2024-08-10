@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({OrderedModels, UserModels, CompanyModels, ProjectModels, StockModels, MaterialCodeModels}) {
+    static associate({OrderedModels, UserModels, CompanyModels, ProjectModels, StockModels, MaterialCodeModels, CertificateAndPassportModels}) {
       // define association here
       this.belongsTo(OrderedModels, {foreignKey: 'orderedId'});
       this.belongsTo(CompanyModels, {foreignKey: 'companyId'});
@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(UserModels, {foreignKey: 'createdById'});
       this.belongsTo(MaterialCodeModels, {foreignKey: 'materialCodeId'});
       this.hasMany(StockModels, {foreignKey: 'warehouseId'});
+      this.hasMany(CertificateAndPassportModels, {foreignKey: 'warehouseId'});
     }
   }
   WarehouseModels.init({
