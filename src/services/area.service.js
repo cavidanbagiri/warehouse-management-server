@@ -72,6 +72,7 @@ class FilterAreaDataService {
     static async filterAreaData(data) {
         const query = this.convertToSql(data);
         const respond = await sequelize.query(query);
+        console.log('object : ', respond[0]);
         return respond[0];
     }
 

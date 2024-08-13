@@ -1,27 +1,20 @@
 
 -> Real Time Solving
 
-	1 - Create a form for adding certificate and password to cloud - Stopped
-	
 	3 - Warehouse Date filter problem is active - Stopped
-
-
 	
+	1 - Create Dashboard Page for home page - Stopped
+
+
+
 
 -> Long Term Operation	
-	
-	1 - Show Row Selected Inform in Warehouse, Stock and Area side - Stopped
 	
 	2 - Solve Not Serializable Error (Return Warehouse Page) - Stopped
 
 	3 - Show All Materials for Managers Users - Stopped
 	
 	4 - User Not found error is Active - *********** Stopped
-	
-	5 - Need To Check All All Status Codes - Stopped
-		5.1 - if something is already has, status will be 409 - Stopped
-
-	7 - Create Dashboard Page for home page - Stopped
 
 	8 - Add profile Page for all users (This will work in home page design time)- Stopped
 
@@ -29,9 +22,11 @@
 
 
 
+
 -> Add More Functionality, Not important
 	
 	1 - Add Animated Design- Stopped
+
 
 
 -> Before Production

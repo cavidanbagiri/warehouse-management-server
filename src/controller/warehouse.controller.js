@@ -32,25 +32,27 @@ class WarehouseController {
                     next(err);
                 })
         )
+
     }
+
 
     static async fetchWarehouseData(req, res, next) {
         const projectId = req.params.projectId;
-        tryCatch(
-            await FetchWarehouseDataService.fetchWarehouseData(projectId)
-                .then((respond) => {
-                    return res.status(200).json(respond);
-                })
-                .catch((err) => {
-                    console.log('fetch warehouse error : ', err);
-                    next(err);
-                })
-        )
+            tryCatch(
+                await FetchWarehouseDataService.fetchWarehouseData(projectId)
+                    .then((respond) => {
+                        return res.status(200).json(respond);
+                    })
+                    .catch((err) => {
+                        console.log('fetch warehouse error : ', err);
+                        next(err);
+                    })
+            )
     }
 
     static async getPOById(req, res, next) {
         const id = req.params.id
-        tryCatch(
+         tryCatch(
             await GetPOWarehouseService.getPOById(id)
                 .then((respond) => {
                     return res.status(200).json(respond);
@@ -119,15 +121,15 @@ class WarehouseController {
 
     static async fetchSelectedItemsById(req, res, next) {
         const data = req.body;
-        tryCatch(
-            await FetchSelectedItemsService.fetchSelectedItemsById(data)
-                .then((respond) => {
-                    return res.status(200).json(respond);
-                })
-                .catch((err) => {
-                    next(err)
-                })
-        )
+            tryCatch(
+                await FetchSelectedItemsService.fetchSelectedItemsById(data)
+                    .then((respond) => {
+                        return res.status(200).json(respond);
+                    })
+                    .catch((err) => {
+                        next(err)
+                    })
+            )
     }
 
     static async receiveToStock(req, res, next) {
@@ -148,7 +150,6 @@ class WarehouseController {
         const data = req.body;
         data.userId = req.user.id;
         const file = req.file;
-
         tryCatch(
             await UploadCertificateOrPassportService.uploadCertificateOrPassport(data, file)
                 .then((respond) => {

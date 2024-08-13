@@ -224,7 +224,7 @@ class ReturnToWarehouseService {
         if(!data.return_amount){
             throw new Error('Please enter return amount');
         }
-        else if(data.return_amount < 0){
+        else if(data.return_amount <= 0){
             throw new Error('Please enter return amount greater than 0');
         }
 

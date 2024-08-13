@@ -1,5 +1,15 @@
 
-const {ProjectModels, GroupModels, CompanyModels, UserModels } = require ('../../models');
+const {ProjectModels, 
+    GroupModels, 
+    CompanyModels, 
+    UserModels, 
+    WarehouseModels, 
+    StockModels, 
+    AreaModels, 
+    ServiceMaterialModels,
+    UnusableMaterialModels,
+    CertificateAndPassportModels
+} = require ('../../models');
 
 const { Op } = require("sequelize");
 
@@ -78,12 +88,66 @@ class OrderedService{
         
 }
 
+class RowInformClassService{
+
+    static async getRowInfo(module, row_id){
+        
+        let result = null;
+        if(module === 'warehouse'){
+            console.log('warehouse id work');
+            result = await this.getWarehouseInformation(row_id);
+        }
+        else if(module === 'stock'){
+            result = await this.getStockInformation(row_id);
+        }
+        return result;
+    }
+
+    static async getStockInformation(stock_id){
+        const stock_result = await StockModels.findByPk(stock_id);
+        const result = await this.getWarehouseInformation(stock_result.warehouseId);
+        return result;
+    }
+
+    static async getWarehouseInformation(warehouse_id){
+        const result = await WarehouseModels.findByPk(warehouse_id,{
+            attributes: ['id', 'document', 'material_name', 'type', 'qty', 'unit', 'price', 'currency', 'po', 'leftover'],
+            include: [
+                {model: ProjectModels, attributes: ['id', 'project_name']},
+                {model: UserModels, attributes: ['id', 'firstName', 'lastName']},
+                {model: CertificateAndPassportModels, attributes: ['id', 'filename', 'location']},
+                {
+                    model: StockModels, 
+                    attributes: ['qty','stock','serial_number', 'material_id'],
+                    include: [
+                        {
+                            model: AreaModels, 
+                            attributes: ['id', 'card_number', 'username'],
+                            include: [
+                                {model: GroupModels, attributes: ['id', 'group_name']},
+                            ]
+                        },
+                        {
+                            model: ServiceMaterialModels,
+                            attributes: ['id', 'amount', 'comments']
+                        },
+                        {model: UnusableMaterialModels, attributes: ['id', 'amount']},
+                    ]
+                },
+            ]    
+        });
+        return result;
+    }
+
+}
+
 module.exports = {
   
     ProjectService,
     GroupService,
     CompanyService,
     UserService,
-    OrderedService
+    OrderedService,
+    RowInformClassService
 
 }

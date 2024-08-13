@@ -1,5 +1,5 @@
 
-const {ProjectService, GroupService, CompanyService, UserService, OrderedService } = require('../services/common.service');
+const {ProjectService, GroupService, CompanyService, UserService, OrderedService, RowInformClassService } = require('../services/common.service');
 const tryCatch = require('../utils/tryCatch');
 class CommonController{
     
@@ -97,6 +97,23 @@ class CommonController{
                 next(err)
             })
         )
+    }
+
+    static async getRowInfo(req, res, next){
+        const module = req.params.module;
+        const row_id = req.params.row_id;
+        setTimeout(async() => {
+            tryCatch(
+                await  RowInformClassService.getRowInfo(module, row_id)
+                .then((respond)=>{
+                    return res.status(200).json(respond);
+                })
+                .catch((err)=>{
+                    console.log('row inform error : ',err);
+                    next(err)
+                })
+            )
+        },2000)
     }
 
 }

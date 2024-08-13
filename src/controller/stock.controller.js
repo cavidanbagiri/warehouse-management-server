@@ -67,17 +67,16 @@ class StockController {
     static async provideStock(req, res, next) {
         const data = req.body;
         data.createdById = req.user.id;
-            tryCatch(
-                await ProvideStockService.provideStock(data)
-                    .then((respond) => {
-                        return res.status(201).json({ msg: 'Successfully Provide', data: respond });
-                    }).catch((err) => {
-                        {
-                            next(err);
-                        }
-                    })
-            )
-        
+        tryCatch(
+            await ProvideStockService.provideStock(data)
+                .then((respond) => {
+                    return res.status(201).json({ msg: 'Successfully Provide', data: respond });
+                }).catch((err) => {
+                    {
+                        next(err);
+                    }
+                })
+        )
     }
 
     static async updateStock(req, res, next) {
@@ -106,6 +105,7 @@ class StockController {
                     }
                 })
         )
+
 
     }
 

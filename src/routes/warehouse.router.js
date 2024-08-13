@@ -14,11 +14,11 @@ const upload = multer({
     // }
 })
 
-router.post('/receivewarehouse', authMiddleware, WarehouseController.receiveMaterial); // Checked
+router.post('/receivewarehouse', authMiddleware, WarehouseController.receiveMaterial); 
 
 router.get('/fetch/:projectId', authMiddleware, WarehouseController.fetchWarehouseData); 
 
-router.get('/filter', WarehouseController.filterWarehouseData); 
+router.get('/filter', authMiddleware, WarehouseController.filterWarehouseData); 
 
 router.get('/po/:id', authMiddleware, WarehouseController.getPOById); 
 

@@ -12,5 +12,6 @@ router.get('/filtercompanies', authMiddleware,CommonController.filterCompanies);
 router.get('/users', authMiddleware, CommonController.fetchUsers);
 router.get('/ordereds', authMiddleware, CommonController.fetchOrdereds);
 router.get('/filterordereds', authMiddleware, CommonController.filterOrdereds);
+router.get('/rowinform/:module/:row_id', CommonController.getRowInfo);
 
 module.exports = router;

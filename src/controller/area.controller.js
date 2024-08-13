@@ -45,7 +45,6 @@ class AreaController {
 
     static async updateArea(req, res, next) {
         const data = req.body;
-        // setTimeout(async () => {
         tryCatch(
             await UpdateAreaService.updateArea(data)
                 .then((respond) => {
@@ -57,7 +56,6 @@ class AreaController {
                     }
                 })
         )
-        // }, 2000)
     }
 
     static async returnArea(req, res, next) {
@@ -99,36 +97,32 @@ class AreaController {
 
     static async unusableReturnToStock(req, res, next) {
         const data = req.body;
-        setTimeout(async () => {
-            tryCatch(
-                await UnusableServiceReturnToStockService.unusableReturnToStock(data)
-                    .then((respond) => {
-                        return res.status(201).json({ msg: 'Successfully Returned', data: respond });
-                    }).catch((err) => {
-                        {
-                            console.error(err.message)
-                            next(err);
-                        }
-                    })
-            )
-        },2000)
+        tryCatch(
+            await UnusableServiceReturnToStockService.unusableReturnToStock(data)
+                .then((respond) => {
+                    return res.status(201).json({ msg: 'Successfully Returned', data: respond });
+                }).catch((err) => {
+                    {
+                        console.error(err.message)
+                        next(err);
+                    }
+                })
+        )
     }
 
     static async serviceReturnToStock(req, res, next) {
         const data = req.body;
-        setTimeout(async () => {
-            tryCatch(
-                await UnusableServiceReturnToStockService.serviceReturnToStock(data)
-                    .then((respond) => {
-                        return res.status(201).json({ msg: 'Successfully Returned', data: respond });
-                    }).catch((err) => {
-                        {
-                            console.error(err.message)
-                            next(err);
-                        }
-                    })
-            )
-        },2000)
+        tryCatch(
+            await UnusableServiceReturnToStockService.serviceReturnToStock(data)
+                .then((respond) => {
+                    return res.status(201).json({ msg: 'Successfully Returned', data: respond });
+                }).catch((err) => {
+                    {
+                        console.error(err.message)
+                        next(err);
+                    }
+                })
+        )
     }
 
 }
