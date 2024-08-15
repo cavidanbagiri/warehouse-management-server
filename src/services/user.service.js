@@ -71,17 +71,25 @@ class UserServiceLogin{
     const find_user = await this.#findUser(user_data.email, user_data.password);
 
     if(find_user){
-      const find_user_data = {
+      const find_user_data_for_token = {
         id: find_user.id,
         email: find_user.email,
         is_admin: find_user.is_admin,
         status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
         projectId: find_user.projectId,
       }
-      const tokens = TokenService.generateToken(find_user_data);
+      const find_user_data = {
+        id: find_user.id,
+        email: find_user.email,
+        is_admin: find_user.is_admin,
+        status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
+        projectId: find_user.projectId,
+        username: find_user.firstName.charAt(0).toUpperCase() + find_user.firstName.slice(1) + ' '+find_user.lastName.charAt(0).toUpperCase() + find_user.lastName.slice(1),
+      }
+      const tokens = TokenService.generateToken(find_user_data_for_token);
 
       // Save Refresh Token To Database
-      await TokenService.saveToken(find_user_data.id, tokens.refresh_token);
+      await TokenService.saveToken(find_user_data_for_token.id, tokens.refresh_token);
 
       return {
         access: tokens.access_token,
@@ -161,17 +169,25 @@ class UserServiceRefresh{
       throw new Error('User Not Found');
     }
     else{
-      const find_user_data = {
+      const find_user_data_for_token = {
         id: find_user.id,
         email: find_user.email,
         is_admin: find_user.is_admin,
         status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
         projectId: find_user.projectId,
       }
-      const tokens = TokenService.generateToken(find_user_data);
+      const find_user_data = {
+        id: find_user.id,
+        email: find_user.email,
+        is_admin: find_user.is_admin,
+        status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
+        projectId: find_user.projectId,
+        username: find_user.firstName.charAt(0).toUpperCase() + find_user.firstName.slice(1) + ' '+find_user.lastName.charAt(0).toUpperCase() + find_user.lastName.slice(1),
+      }
+      const tokens = TokenService.generateToken(find_user_data_for_token);
       
       // Save Refresh Token To Database
-      await TokenService.saveToken(find_user_data.id, tokens.refresh_token);
+      await TokenService.saveToken(find_user_data_for_token.id, tokens.refresh_token);
       
       return {
         access: tokens.access_token,

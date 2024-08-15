@@ -3,9 +3,8 @@
 
 	3 - Warehouse Date filter problem is active - Stopped
 	
-	1 - Create Dashboard Page for home page - Stopped
-
-
+	
+	
 
 
 -> Long Term Operation	
@@ -33,4 +32,4 @@
 
 	1 - Hide in 0 elements in stock - Stopped
 	2 - For Each side, Select max 200 documents - Stopped
-
+	3 - Need To Show Dynamic List For Dashboard side - Stopped

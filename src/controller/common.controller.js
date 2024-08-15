@@ -1,5 +1,5 @@
 
-const {ProjectService, GroupService, CompanyService, UserService, OrderedService, RowInformClassService } = require('../services/common.service');
+const {ProjectService, GroupService, CompanyService, UserService, OrderedService, RowInformClassService, DashboardAnalyzService } = require('../services/common.service');
 const tryCatch = require('../utils/tryCatch');
 class CommonController{
     
@@ -114,6 +114,48 @@ class CommonController{
                 })
             )
         },2000)
+    }
+
+
+    static async getTopCompanies(req, res, next){
+        tryCatch(
+            await  DashboardAnalyzService.getTopCompanies()
+            .then((respond)=>{
+                return res.status(200).json(respond);
+            })
+            .catch((err)=>{
+                console.log('fetch top company error : ',err);
+                next(err)
+            })
+        )
+    }
+
+    static async getStockAnalyz(req, res, next){
+        const project_id = req.params.project_id;
+        tryCatch(
+            await  DashboardAnalyzService.getStockAnalyz(project_id)
+            .then((respond)=>{
+                return res.status(200).json(respond);
+            })
+            .catch((err)=>{
+                console.log('fetch stock analyz error : ', err);
+                next(err)
+            })
+        )
+    }
+
+    static async getGroupChartAnalyz(req, res, next){
+        const project_id = req.params.project_id;
+        tryCatch(
+            await  DashboardAnalyzService.getGroupChartAnalyz(project_id)
+            .then((respond)=>{
+                return res.status(200).json(respond);
+            })
+            .catch((err)=>{
+                console.log('fetch stock analyz error : ', err);
+                next(err)
+            })
+        )
     }
 
 }

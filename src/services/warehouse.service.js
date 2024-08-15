@@ -333,7 +333,6 @@ class UploadCertificateOrPassportService {
 
 }
 
-
 class FetchCertificateOrPassportService {
     static async fetchCertificatesOrPassports(warehouseId) {
 

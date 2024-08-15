@@ -134,7 +134,6 @@ class GetDatasByIdsService {
     }
 }
 
-
 class ProvideStockService {
     static async provideStock(data) {
 
@@ -192,7 +191,6 @@ class ProvideStockService {
     }
 
 }
-
 
 class UpdateStockService {
     static async updateStock(data) {
@@ -294,7 +292,6 @@ class ReturnToWarehouseService {
     }
 
 }
-
 
 class UnusableMaterialService{
 
