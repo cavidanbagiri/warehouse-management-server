@@ -6,25 +6,12 @@
 	
 	
 
-
 -> Long Term Operation	
-	
-	2 - Solve Not Serializable Error (Return Warehouse Page) - Stopped
-
-	3 - Show All Materials for Managers Users - Stopped
-	
-	4 - User Not found error is Active - *********** Stopped
-
-	8 - Add profile Page for all users (This will work in home page design time)- Stopped
-
-	10 - Warehouse Side, need to return to company or vozvrat material - Stopped
 
 
+	1 - Show All Materials for Managers Users - Stopped
 
-
--> Add More Functionality, Not important
-	
-	1 - Add Animated Design- Stopped
+	2 - Warehouse Side, need to return to company or vozvrat material - Stopped
 
 
 

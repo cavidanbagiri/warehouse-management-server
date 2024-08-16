@@ -5,6 +5,7 @@ const CommonRouter = require('./common.router');
 const WarehouseRouter = require('./warehouse.router');
 const StockRouter = require('./stock.router');
 const AreaRouter = require('./area.router');
+const ProfileRouter = require('./profile.router');
 
 module.exports = {
   UserRouter,
@@ -12,5 +13,6 @@ module.exports = {
   CommonRouter,
   WarehouseRouter,
   StockRouter,
-  AreaRouter
+  AreaRouter,
+  ProfileRouter
 }

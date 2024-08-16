@@ -1,5 +1,5 @@
 
-const { sequelize, UserModels , UserStatusModels} = require('../../models');
+const { sequelize, UserModels , UserStatusModels, ProfileImagesModels} = require('../../models');
 
 const hashPassword = require('../helpers/hash_password');
 
@@ -85,6 +85,8 @@ class UserServiceLogin{
         status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
         projectId: find_user.projectId,
         username: find_user.firstName.charAt(0).toUpperCase() + find_user.firstName.slice(1) + ' '+find_user.lastName.charAt(0).toUpperCase() + find_user.lastName.slice(1),
+        status_name: find_user.dataValues.UserStatusModel.dataValues.status_name,
+        profileImage: await this.getProfileImage(find_user.id)
       }
       const tokens = TokenService.generateToken(find_user_data_for_token);
 
@@ -128,6 +130,19 @@ class UserServiceLogin{
       return null;
     }
   }
+
+  static async getProfileImage(user_id) {
+    const user = await ProfileImagesModels.findOne({
+      where: {
+        userId: user_id
+      }
+    });
+    if(!user) {
+      return null;
+    }
+    return user.location;
+  }
+
 }
 
 // User Logout
@@ -183,9 +198,10 @@ class UserServiceRefresh{
         status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
         projectId: find_user.projectId,
         username: find_user.firstName.charAt(0).toUpperCase() + find_user.firstName.slice(1) + ' '+find_user.lastName.charAt(0).toUpperCase() + find_user.lastName.slice(1),
+        status_name: find_user.dataValues.UserStatusModel.dataValues.status_name,
+        profileImage: await this.getProfileImage(find_user.id)
       }
       const tokens = TokenService.generateToken(find_user_data_for_token);
-      
       // Save Refresh Token To Database
       await TokenService.saveToken(find_user_data_for_token.id, tokens.refresh_token);
       
@@ -195,7 +211,18 @@ class UserServiceRefresh{
         user: find_user_data
       }
     }
+  }
 
+  static async getProfileImage(user_id) {
+    const user = await ProfileImagesModels.findOne({
+      where: {
+        userId: user_id
+      }
+    });
+    if(!user) {
+      return null;
+    }
+    return user.location;
   }
 }
 

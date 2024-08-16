@@ -1,5 +1,6 @@
 
 const { WarehouseModels, OrderedModels, CompanyModels, StockModels, sequelize, CertificateAndPassportModels } = require('../../models');
+const { Op, QueryTypes } = require('sequelize');
 const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
 const s3 = require('../storage/storage');
@@ -172,7 +173,8 @@ class UpdatePOWarehouseService {
 class FilterWarehouseDataService {
     static async filterWarehouseData(data) {
         const query = this.convertToSql(data);
-        const respond = await sequelize.query(query);
+        const respond = await sequelize.query(query, {  });
+        console.log('respond is : ', respond);
         return respond[0];
     }
 
