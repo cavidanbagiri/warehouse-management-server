@@ -12,7 +12,7 @@ class UserError extends Error{
   }
 
   static UserNotFoundError(){
-    return new UserError(400, "User Not Found");
+    return new UserError(400, "Boyle bir kullanici bulunamadi");
   }
 
   static UnauthorizedError(){
@@ -20,7 +20,7 @@ class UserError extends Error{
   }
 
   static UserAlreadyRegisterError(){
-    return new UserError(400, "Email Already Activate");
+    return new UserError(400, "Bu kullanıcı zaten kayıtlı");
   }
   
   static BadRequest(message, errors){

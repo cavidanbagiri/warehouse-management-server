@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     project_name: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    abbrevation_name: {
+      type: DataTypes.STRING,
+      allowNull: true
     }
   }, {
     sequelize,

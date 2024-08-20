@@ -12,13 +12,14 @@ class AdminController {
 
     static async createProject(req, res, next) {
         const project_data = {
-            project_name: req.body.project_name
+            project_name: req.body.project_name.toLowerCase().trim(),
+            abbrevation_name: req.body.abbrevation_name.toLowerCase().trim(),
         }
        setTimeout(async()=>{
         tryCatch(
             await ProjectService.createProject(project_data)
                 .then((respond) => {
-                    return res.status(201).json({ 'msg': 'Project Created' });
+                    return res.status(201).json({ 'msg': 'Proje Başarı İle Oluşturuldu' });
                 })
                 .catch((err) => {
                     console.log('create project error : ', err);

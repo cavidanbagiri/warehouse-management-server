@@ -12,13 +12,15 @@ class StockQueries {
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
         InitCap("GroupModels".group_name) as group_name,
         InitCap("CompanyModels".company_name) as company_name,
-        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description,
+        upper("ProjectModels".abbrevation_name) as abbrevation_name
         from "StockModels"
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId"
         left join "GroupModels" on "OrderedModels"."groupId" = "GroupModels".id
         left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+        left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
         `
         return query;
     }
@@ -29,9 +31,19 @@ class FetchStockService {
 
     static async getStocks(projectId) {
         const select_query = StockQueries.selectQuery();
-        const query = `${select_query} 
-        where "WarehouseModels"."projectId"=${projectId}
-        order by "StockModels"."createdAt" asc`;
+        let query = '';
+
+        if(projectId == 13){
+            query = `${select_query}
+            order by "StockModels"."createdAt" asc    
+            `;
+        }
+        else{
+            query = `${select_query} 
+            where "WarehouseModels"."projectId"=${projectId}
+            order by "StockModels"."createdAt" asc`;
+        }
+        
         const respond = await sequelize.query(query)
         return respond[0];
     }
@@ -53,7 +65,8 @@ class FilterStockDataService {
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
         InitCap("GroupModels".group_name) as group_name,
         InitCap("CompanyModels".company_name) as company_name,
-        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description,
+        upper("ProjectModels".abbrevation_name) as abbrevation_name
         `;
 
         query += ` from "StockModels" 
@@ -62,6 +75,7 @@ class FilterStockDataService {
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
         left join "GroupModels" on "OrderedModels"."groupId" = "GroupModels".id
         left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+        left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
         `
 
         let where_query = ' where ';
@@ -139,10 +153,10 @@ class ProvideStockService {
 
         for (let i in data.data) {
             if(!data.data[i].amount){
-                throw Error('Enter amount in ' + Number(Number(i) + 1) + 'th row');
+                throw Error(Number(Number(i) + 1) + ' Satirda gecerli rakam giriniz');
             }
             else if(data.data[i].amount <= 0){
-                throw Error('Enter valid amount in ' + Number(Number(i) + 1) + 'th row');
+                throw Error(Number(Number(i) + 1) + ' Satirda 0 ve ya negativ rakam girilmis');
             }
         }
 
@@ -163,7 +177,7 @@ class ProvideStockService {
     static async findByPK(id, data, row_num) {
         const result = await StockModels.findByPk(id);
         if (result.stock < Number(data)) {
-            throw InsufficientError.inSufficientError('Entering amount greater than stock amount in ' + Number(Number(row_num) + 1) + 'th row');
+            throw InsufficientError.inSufficientError(Number(Number(row_num) + 1) + 'Setirde, girilen miktar, stock miktarindan fazladir');
         }
         return true;
     }
@@ -220,10 +234,10 @@ class ReturnToWarehouseService {
     static async returnToWarehouse(data) {
 
         if(!data.return_amount){
-            throw new Error('Please enter return amount');
+            throw new Error('Gecerli miktar giriniz');
         }
         else if(data.return_amount <= 0){
-            throw new Error('Please enter return amount greater than 0');
+            throw new Error('Girilen miktar 0 ve ya negativ olamaz');
         }
 
 
@@ -232,7 +246,7 @@ class ReturnToWarehouseService {
 
         // 2 - Check To Stock
         if (result.stock < data.return_amount) {
-            throw InsufficientError.inSufficientError('Entering amount greater than stock amount');
+            throw InsufficientError.inSufficientError('Girilen miktar, stock miktarindan fazladir');
         }
         else {
 
@@ -298,10 +312,10 @@ class UnusableMaterialService{
     static async setUnusableMaterial(data){
 
         if(!data.amount){
-            throw new Error('Please enter amount');
+            throw new Error('Dogru deyer giriniz');
         }
         else if(data.amount < 0){
-            throw new Error('Please enter amount greater than 0');
+            throw new Error('Girilen deyer 0 ve ya negativ olamaz');
         }
 
         const result = await StockModels.findByPk(data.id);
@@ -319,7 +333,7 @@ class UnusableMaterialService{
             return result;
         }
         else{
-            throw InsufficientError.inSufficientError('Entering amount greater than stock amount');
+            throw InsufficientError.inSufficientError('Girilen miktar stock miktarindan fazladir');
         }
 
     }
@@ -328,10 +342,10 @@ class UnusableMaterialService{
 class ServiceMaterialService{
     static async setServiceMaterial(data){
         if(!data.amount){
-            throw new Error('Please enter amount');
+            throw new Error('Dogru deyer giriniz');
         }
         else if(data.amount < 0){
-            throw new Error('Please enter amount greater than 0');
+            throw new Error('Girilen deyer 0 ve ya negativ olamaz');
         }
 
         const result = await StockModels.findByPk(data.id);
@@ -348,7 +362,7 @@ class ServiceMaterialService{
             return result;
         }
         else{
-            throw InsufficientError.inSufficientError('Entering amount greater than stock amount');
+            throw InsufficientError.inSufficientError('Giriken miktar, stock miktarindan fazladir');
         }
 
     }

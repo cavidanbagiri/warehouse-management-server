@@ -2,16 +2,14 @@
 -> Real Time Solving
 
 	3 - Warehouse Date filter problem is active - Stopped
-	
-	
-	
+
+	2 - Need to select project for head managers - Working
+
+	1 - Need to add overflow to service and unusable create side
 
 -> Long Term Operation	
 
-
-	1 - Show All Materials for Managers Users - Stopped
-
-	2 - Warehouse Side, need to return to company or vozvrat material - Stopped
+	1 - Warehouse Side, need to return to company or vozvrat material - Stopped
 
 
 

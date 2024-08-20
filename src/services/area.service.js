@@ -2,42 +2,65 @@
 const { AreaModels, StockModels, sequelize, UnusableMaterialModels, ServiceMaterialModels }
  = require('../../models');
 
-
-class FetchAreaService {
-    static async getAreas(projectId) {
+ class AreaQueries {
+    static selectQuery(){
         const query = `
             select "WarehouseModels".material_name, "WarehouseModels".unit, "WarehouseModels".type, "WarehouseModels".po, 
             "AreaModels".id, "AreaModels".qty, "AreaModels".serial_number, "AreaModels".material_id, "AreaModels".card_number, Initcap("AreaModels".username ) as username, 
             "AreaModels"."providerType", "AreaModels"."createdAt" as deliver_date,
             "GroupModels".group_name,
-            "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
+            "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description,
+            upper("ProjectModels".abbrevation_name) as abbrevation_name
             from "AreaModels"
             LEFT JOIN "StockModels" on "StockModels"."id" = "AreaModels"."stockId"
             LEFT JOIN "WarehouseModels" on "WarehouseModels"."id" = "StockModels"."warehouseId"
             LEFT JOIN "GroupModels" on "GroupModels".id = "AreaModels"."groupId" 
             LEFT JOIN "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
-            where "projectId"=${projectId}`;
+            left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
+        `
+        return query;
+    }
+ }
+
+class FetchAreaService {
+    static async getAreas(projectId) {
+        const selectQuery = AreaQueries.selectQuery();
+        let query = '';
+        if(projectId == 13){
+            query = `${selectQuery} order by "AreaModels"."createdAt" asc`;
+        }
+        else{
+            query = `${selectQuery} where "projectId"=${projectId}
+            order by "AreaModels"."createdAt" asc`;
+        }
 
         const respond = await sequelize.query(query);
         return respond[0];
     }
 
     static async getUnusableMaterials(projectId) {
-        console.log('unusable work');
-        const query = `
+        let query = `
         select "UnusableMaterialModels".id, "WarehouseModels".material_name,  "WarehouseModels".unit,
         "WarehouseModels".po, "WarehouseModels".price, UPPER("WarehouseModels".currency) as currency,
 		Initcap("MaterialCodeModels".material_description) as material_description, "MaterialCodeModels".material_code,
         "StockModels".serial_number, "StockModels".material_id,
         "UnusableMaterialModels".amount, "UnusableMaterialModels"."createdAt"::date as date,
         "UnusableMaterialModels".comments,
-        initcap(concat("UserModels"."firstName",' ', "UserModels"."lastName")) as created_by
+        initcap(concat("UserModels"."firstName",' ', "UserModels"."lastName")) as created_by,
+        UPPER("ProjectModels".abbrevation_name) as abbrevation_name
         from "UnusableMaterialModels"
         left join "StockModels" on "StockModels".id = "UnusableMaterialModels"."stockId"
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "UserModels" on "UserModels".id = "UnusableMaterialModels"."createdById"
 		left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
-        where "WarehouseModels"."projectId" =  ${projectId}`
+        left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
+        `;
+        if(projectId == 13){
+            
+        }
+        else{
+            query += `where "WarehouseModels"."projectId" =  ${projectId}`
+        }
 
         const respond = await sequelize.query(query);
         return respond[0];
@@ -45,21 +68,28 @@ class FetchAreaService {
     
     
     static async getServiceMaterials(projectId) {
-        console.log('service work');
-        const query = `
+        let query = `
         select "ServiceMaterialModels".id, "WarehouseModels".material_name,  "WarehouseModels".unit,
         "WarehouseModels".po, 
 		Initcap("MaterialCodeModels".material_description) as material_description, "MaterialCodeModels".material_code,
         "StockModels".serial_number, "StockModels".material_id,
         "ServiceMaterialModels".amount, "ServiceMaterialModels"."createdAt"::date as date,
         "ServiceMaterialModels".comments,
-        initcap(concat("UserModels"."firstName",' ', "UserModels"."lastName")) as created_by
+        initcap(concat("UserModels"."firstName",' ', "UserModels"."lastName")) as created_by,
+        UPPER("ProjectModels".abbrevation_name) as abbrevation_name
         from "ServiceMaterialModels"
         left join "StockModels" on "StockModels".id = "ServiceMaterialModels"."stockId"
         left join "WarehouseModels" on "StockModels"."warehouseId" = "WarehouseModels".id
         left join "UserModels" on "UserModels".id = "ServiceMaterialModels"."createdById"
 		left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
-        where "WarehouseModels"."projectId" = ${projectId}`
+        left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
+        `;
+        if(projectId == 13){
+
+        }
+        else{
+            query += `where "WarehouseModels"."projectId" = ${projectId}`
+        }
         
         const respond = await sequelize.query(query);
         return respond[0];
@@ -81,13 +111,16 @@ class FilterAreaDataService {
             "AreaModels".id, "AreaModels".qty, "AreaModels".serial_number, "AreaModels".material_id, "AreaModels".card_number, "AreaModels".username, 
             "AreaModels"."providerType", "AreaModels"."createdAt" as deliver_date,
             "GroupModels".group_name,
-            "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description`;
+            "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description,
+            upper("ProjectModels".abbrevation_name) as abbrevation_name
+            `;
 
         query += ` from "AreaModels" 
             LEFT JOIN "StockModels" on "StockModels"."id" = "AreaModels"."stockId"
             LEFT JOIN "WarehouseModels" on "WarehouseModels"."id" = "StockModels"."warehouseId"
             LEFT JOIN "GroupModels" on "GroupModels".id = "AreaModels"."groupId" 
             LEFT JOIN "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+            left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
         `
         let where_query = ' where ';
         for (let [key, value] of Object.entries(data)) {
@@ -160,15 +193,15 @@ class ReturnAreaService {
 
     static async returnArea(data) {
         if (!data.return_amount) {
-            throw new Error('Return amount is required');
+            throw new Error('Gecerli miktar giriniz');
         }
         else if (data.return_amount <= 0) {
-            throw new Error('Return amount should be greater than 0');
+            throw new Error('Girilen miktar 0 ve ya negativ olamaz');
         }
 
         const result = await this.getById(data.id);
         if (result.qty < data.return_amount) {
-            throw new Error('Entering amount is greater than current amount');
+            throw new Error('Girilen miktar cari miktardan fazladir');
         }
         else {
             // 1 - update qty
@@ -200,16 +233,16 @@ class UnusableServiceReturnToStockService {
     // Return from UnusableMaterialModels
     static async unusableReturnToStock(data) {
         if (!data.amount) {
-            throw new Error('Return amount is required');
+            throw new Error('Gecerli miktar giriniz');
         }
         else if (data.amount <= 0) {
-            throw new Error('Return amount should be greater than 0');
+            throw new Error('Girilen miktar 0 ve ya negativ olamaz');
         }
 
         else{
             const result = await this.getById(data.id, UnusableMaterialModels);
             if(result.amount < data.amount){
-                throw new Error('Entering amount is greater than current amount');
+                throw new Error('Girilen miktar cari miktardan fazladir');
             }
             else{
                 // 1 - update amount
@@ -227,16 +260,16 @@ class UnusableServiceReturnToStockService {
     // Return from ServiceMaterialModels
     static async serviceReturnToStock(data) {
         if (!data.amount) {  
-            throw new Error('Return amount is required');
+            throw new Error('Gecerli miktar giriniz');
         }
         else if (data.amount <= 0) {
-            throw new Error('Return amount should be greater than 0');
+            throw new Error('Girilen miktar 0 ve ya negativ olamaz');
         }
 
         else{
             const result = await this.getById(data.id, ServiceMaterialModels);
             if(result.amount < data.amount){
-                throw new Error('Entering amount is greater than current amount');
+                throw new Error('Girilen miktar cari miktardan fazladir');
             }
             else{
                 // 1 - update amount

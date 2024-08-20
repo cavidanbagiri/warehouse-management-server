@@ -8,7 +8,8 @@ class ProjectService{
         // Check Project Name
         const project = await ProjectModels.findOne({
             where:{
-                project_name: data.project_name
+                project_name: data.project_name,
+                abbrevation_name: data.abbrevation_name
             }
         })
         if(project){

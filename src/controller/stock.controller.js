@@ -70,7 +70,7 @@ class StockController {
         tryCatch(
             await ProvideStockService.provideStock(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Provide', data: respond });
+                    return res.status(201).json({ msg: 'Islem Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
                         next(err);
@@ -84,7 +84,7 @@ class StockController {
         tryCatch(
             await UpdateStockService.updateStock(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Updated', data: respond });
+                    return res.status(201).json({ msg: 'Basariyla Guncellendi', data: respond });
                 }).catch((err) => {
                     {
                         next(err);
@@ -98,7 +98,7 @@ class StockController {
         tryCatch(
             await ReturnToWarehouseService.returnToWarehouse(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Returned', data: respond });
+                    return res.status(201).json({ msg: 'Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
                         next(err);
@@ -115,7 +115,7 @@ class StockController {
         tryCatch(
             await UnusableMaterialService.setUnusableMaterial(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Set to unusable', data: respond });
+                    return res.status(201).json({ msg: 'Islem Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
                         next(err);
@@ -131,7 +131,7 @@ class StockController {
         tryCatch(
             await ServiceMaterialService.setServiceMaterial(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Set to service', data: respond });
+                    return res.status(201).json({ msg: 'Islem Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
                         next(err);

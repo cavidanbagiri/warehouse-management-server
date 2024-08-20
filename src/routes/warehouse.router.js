@@ -25,7 +25,6 @@ router.get('/po/:id', authMiddleware, WarehouseController.getPOById);
 router.post('/update/:id', authMiddleware, WarehouseController.updatePo); // Checked
 
 router.post('/updatecertorpassportbyid', authMiddleware, WarehouseController.updateCertOrPassportById);
-
 router.post('/uploadcertificateorpassport', authMiddleware, upload.single("file"), WarehouseController.uploadCertificateOrPassport);
 router.get('/fetchcertificatesorpassport/:warehouseId', WarehouseController.fetchCertificatesOrPassports);
 

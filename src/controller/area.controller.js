@@ -48,7 +48,7 @@ class AreaController {
         tryCatch(
             await UpdateAreaService.updateArea(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Updated', data: respond });
+                    return res.status(201).json({ msg: 'Basariyla Guncellendi', data: respond });
                 }).catch((err) => {
                     {
                         console.error(err.message)
@@ -63,7 +63,7 @@ class AreaController {
         tryCatch(
             await ReturnAreaService.returnArea(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Updated', data: respond });
+                    return res.status(201).json({ msg: 'Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
                         console.error(err.message)
@@ -100,7 +100,7 @@ class AreaController {
         tryCatch(
             await UnusableServiceReturnToStockService.unusableReturnToStock(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Returned', data: respond });
+                    return res.status(201).json({ msg: 'Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
                         console.error(err.message)
@@ -115,7 +115,7 @@ class AreaController {
         tryCatch(
             await UnusableServiceReturnToStockService.serviceReturnToStock(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully Returned', data: respond });
+                    return res.status(201).json({ msg: 'Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
                         console.error(err.message)

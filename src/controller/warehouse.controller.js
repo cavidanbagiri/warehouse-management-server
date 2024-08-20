@@ -26,7 +26,7 @@ class WarehouseController {
         tryCatch(
             await ReceiveWarehouseService.receiveMaterial(data.table_data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully received' });
+                    return res.status(201).json({ msg: 'Islem Basariyla Tamamlandi' });
                 })
                 .catch((err) => {
                     next(err);
@@ -69,7 +69,7 @@ class WarehouseController {
         tryCatch(
             await UpdatePOWarehouseService.updatePo(id, data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Succesfully updated ', data: respond });
+                    return res.status(201).json({ msg: 'Basariyla Guncellendi ', data: respond });
                 })
                 .catch((err) => {
                     next(err);
@@ -82,7 +82,7 @@ class WarehouseController {
         tryCatch(
             await UpdatePOWarehouseService.updateCertOrPassportById(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Succesfully updated ', data: respond });
+                    return res.status(201).json({ msg: 'Islem Basariyla Tamamlandi ', data: respond });
                 })
                 .catch((err) => {
                     next(err);
@@ -139,7 +139,7 @@ class WarehouseController {
         tryCatch(
             await ReceiveToStockService.receiveToStock(data)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully received to stock', data: respond });
+                    return res.status(201).json({ msg: 'Stoka alma islemi basariyla tamamlandi', data: respond });
                 })
                 .catch((err) => {
                     next(err)
@@ -154,7 +154,7 @@ class WarehouseController {
         tryCatch(
             await UploadCertificateOrPassportService.uploadCertificateOrPassport(data, file)
                 .then((respond) => {
-                    return res.status(201).json({ msg: 'Successfully uploaded', data: respond });
+                    return res.status(201).json({ msg: 'Dosya Basariyla Clouda Yuklendi', data: respond });
                 })
                 .catch((err) => {
                     next(err)

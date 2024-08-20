@@ -40,7 +40,7 @@ class UserServiceRegister{
       return new_user
     } 
     else{
-      throw UserError.UserAlreadyRegisterError(400, 'Email is Already Active')
+      throw UserError.UserAlreadyRegisterError(400, 'Bu email su an aktiv. Baska email giriniz')
     }
 
   }
@@ -120,7 +120,6 @@ class UserServiceLogin{
     });
 
     if(find_user){
-      console.log(find_user.dataValues.UserStatusModel.dataValues);
       const hashing_password = hashPassword(password);
       if(find_user.password === hashing_password){
         return find_user
@@ -181,7 +180,7 @@ class UserServiceRefresh{
     });
 
     if(!find_user){
-      throw new Error('User Not Found');
+      throw new Error('Boyle bir kullanici bulunamadi');
     }
     else{
       const find_user_data_for_token = {

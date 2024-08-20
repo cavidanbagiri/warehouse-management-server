@@ -5,7 +5,6 @@ const InsufficientError = require('../exceptions/insufficient_exceptions.');
 
 const s3 = require('../storage/storage');
 
-const path = require('path');
 
 class WarehouseQueries {
     static selectQuery() {
@@ -15,22 +14,29 @@ class WarehouseQueries {
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover,
         InitCap("CompanyModels".company_name) as company_name,
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
-        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description,
+        upper("ProjectModels".abbrevation_name) as abbrevation_name
         from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
-        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"`;
+        left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+        left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"`        
+        ;
         return query;
     }
 }
 
 class ReceiveWarehouseService {
     static async receiveMaterial(data) {
+        for(let i of data) {
+            i.qty = Number(i.qty);
+            i.price = Number(i.price);
+        }
         try {
             await this.checkEnteringData(data);
             for (let i of data) {
                 await WarehouseModels.create({
-                    ...i,
+                    ...i, 
                     leftover: i.qty,
                     materialCodeId: i.material_code_id,
                     document: i.document.trim(),
@@ -63,16 +69,29 @@ class ReceiveWarehouseService {
 class FetchWarehouseDataService {
     static async fetchWarehouseData(projectId) {
         const select_query = WarehouseQueries.selectQuery();
-        const query = `${select_query} 
-        where "WarehouseModels"."projectId"=${projectId}
-        order by "WarehouseModels"."createdAt" asc`
+        let query = '';
+        if(projectId == 13){
+            query = `${select_query} 
+            order by "WarehouseModels"."createdAt" asc`
+        }
+        else{
+            query = `${select_query} 
+            where "WarehouseModels"."projectId"=${projectId}
+            order by "WarehouseModels"."createdAt" asc`
+        }
         const respond = await sequelize.query(query)
         return respond[0];
     }
 
     static async getTypeCount(projectId) {
         let data = [];
-        const query = `select type, count(qty) from "WarehouseModels" where "projectId"=${projectId} group by type`;
+        let query = '';
+        if(projectId == 13){
+            query = `select type, count(qty) from "WarehouseModels"  group by type`;
+        }
+        else{
+            query = `select type, count(qty) from "WarehouseModels" where "projectId"=${projectId} group by type`;
+        }
         const respond = await sequelize.query(query);
         let total = 0;
         if (respond[0]) {
@@ -114,10 +133,10 @@ class GetPOWarehouseService {
 class UpdatePOWarehouseService {
     static async updatePo(id, data) {
         if (!data.qty) {
-            throw InsufficientError.inSufficientError('Invalid Quantity, Enter a number');
+            throw InsufficientError.inSufficientError('Dogru Deyer Giriniz');
         }
         else if (data.qty < 0) {
-            throw InsufficientError.inSufficientError('Invalid Quantity');
+            throw InsufficientError.inSufficientError('Negativ Deyer Girmezsiniz');
         }
         const respond = await WarehouseModels.findByPk(id);
         if (data.qty > respond.qty) {
@@ -127,7 +146,7 @@ class UpdatePOWarehouseService {
             if (respond.leftover - (respond.qty - data.qty) >= 0) {
                 respond.leftover -= respond.qty - data.qty;
             } else {
-                throw InsufficientError.inSufficientError('Not enough leftover in stock');
+                throw InsufficientError.inSufficientError('Kalan miktar yetersiz, lutfen kontrol ediniz');
             }
         }
         respond.companyId = data.companyId;
@@ -185,13 +204,15 @@ class FilterWarehouseDataService {
         "WarehouseModels".certificate, "WarehouseModels".passport, "WarehouseModels".leftover, 
         InitCap("CompanyModels".company_name) as company_name,
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username,
-        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description`;
+        "MaterialCodeModels".material_code, INITCAP("MaterialCodeModels".material_description) as material_description,
+        upper("ProjectModels".abbrevation_name) as abbrevation_name`;
         query += ` from "WarehouseModels" 
         left join "CompanyModels" on "CompanyModels".id = "WarehouseModels"."companyId"
         left join "OrderedModels" on "OrderedModels".id = "WarehouseModels"."orderedId" 
         left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
+        left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
         `
-
+        
         let where_query = ' where ';
         for (let [key, value] of Object.entries(data)) {
             if (key === 'material_name') {
@@ -259,12 +280,12 @@ class ReceiveToStockService {
         let count = 0;
         for (let i of data) {
             if (!i.entered_amount) {
-                throw new Error('Please enter amount in ' + count + ' row');
+                throw new Error(count,' Satirda girilen mikter dogru diyilmedi. Lutfen kontrol edin');
             }
             count++;
             const result = await this.getPoWithIdAndUpdate(i.id);
             if (result.leftover - Number(i.entered_amount) < 0) {
-                throw new Error('Not enough stock in ' + count + ' row');
+                throw new Error(count + ' Satirda yeteri stok yok. Lutfen kontrol edin');
             }
         }
         return cond;
