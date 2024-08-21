@@ -12,7 +12,13 @@ router.post('/login', UserController.userLogin);
 
 
 
-router.post('/register', authMiddleware, isAdmin,
+// router.post('/register', authMiddleware, isAdmin,
+//   body('email').isEmail(),
+//   body('password').isLength({min:8, max:64}),
+// UserController.userRegister);
+
+
+router.post('/register', 
   body('email').isEmail(),
   body('password').isLength({min:8, max:64}),
 UserController.userRegister);

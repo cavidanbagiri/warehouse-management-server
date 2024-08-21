@@ -3,17 +3,17 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.addConstraint('WarehouseModels',{
-      fields: ['orderedId'],
-      type: 'foreign key',
-      name: 'orderedId',
-      references: {
-        table: 'OrderedModels',
-        field: 'id'
-      },
-      onDelete: 'cascade',
-      onUpdate: 'cascade'
-    });
+    // await queryInterface.addConstraint('WarehouseModels',{
+    //   fields: ['orderedId'],
+    //   type: 'foreign key',
+    //   name: 'orderedId',
+    //   references: {
+    //     table: 'OrderedModels',
+    //     field: 'id'
+    //   },
+    //   onDelete: 'cascade',
+    //   onUpdate: 'cascade'
+    // });
     await queryInterface.addConstraint('WarehouseModels',{
       fields: ['projectId'],
       type: 'foreign key',
@@ -46,7 +46,7 @@ module.exports = {
 
   async down (queryInterface, Sequelize) {
     await queryInterface.removeConstraint('WarehouseModels', 'companyId');
-    await queryInterface.removeConstraint('WarehouseModels', 'orderedId');
+    // await queryInterface.removeConstraint('WarehouseModels', 'orderedId');
     await queryInterface.removeConstraint('WarehouseModels', 'projectId');
     /**
      * Add reverting commands here.

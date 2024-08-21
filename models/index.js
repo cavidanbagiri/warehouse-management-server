@@ -11,9 +11,17 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  console.log('if work')
+  // sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
+  console.log('else work')
+  sequelize = new Sequelize(process.env.DB_PRODUCTION_NAME, process.env.DB_PRODUCTION_USER, process.env.DB_PRODUCTION_PASSWORD, {
+    host: process.env.DB_PRODUCTION_HOST,
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl:true
+    }
+  });
 }
 
 fs

@@ -11,12 +11,15 @@ const isAdmin = require('../middleware/auth_admin');
 
 
 router.post('/createproject', authMiddleware, isAdmin, AdminController.createProject);
+// router.post('/createproject', AdminController.createProject);
 router.get('/projects', authMiddleware, AdminController.fetchProjects); 
 
 router.post('/createuserstatus', isAdmin, authMiddleware, AdminController.createUserStatus);
+// router.post('/createuserstatus', AdminController.createUserStatus);
 router.get('/fetchuserstatus', authMiddleware, AdminController.fetchUserStatus);
 
 router.post('/creategroup', authMiddleware, AdminController.createGroup); // Checked
+// router.post('/creategroup',  AdminController.createGroup); // Checked
 router.get('/groups', authMiddleware, AdminController.fetchGroups); // Checked
 
 router.post('/createcompany', authMiddleware, AdminController.createCompany); // Checked
