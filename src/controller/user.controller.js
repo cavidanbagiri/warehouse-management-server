@@ -49,7 +49,7 @@ class UserController{
     tryCatch(
       UserServiceLogin.userLogin(user_data)
       .then((respond)=>{
-        res.cookie('refreshToken', respond.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
+        res.cookie('refreshToken', respond.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true});
         return res.status(200).send(respond);
       }).catch(err=>{
         next(err);
@@ -74,7 +74,8 @@ class UserController{
     console.log('------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>cookie is : ', req.cookies);
     if(refreshToken){
       const user_data = await UserServiceRefresh.refresh(refreshToken);
-      res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
+
+      res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true});
       return res.status(200).send(user_data);
     }
     else{
