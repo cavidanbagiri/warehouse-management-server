@@ -25,7 +25,7 @@ UserController.userRegister);
 
 router.post('/logout', UserController.userLogout);
 
-router.get('/refresh', UserController.refresh);
+router.post('/refresh', UserController.refresh);
 
 router.get('/users', authMiddleware, UserController.fetchUsers);
 

@@ -69,13 +69,16 @@ class UserController{
   // Refresh Token
   static async refresh(req, res, next) {
     const {refreshToken} = req.cookies;
+
+    console.log('------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>refresh is work and token is : ', refreshToken);
+    console.log('------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>cookie is : ', req.cookies);
     if(refreshToken){
       const user_data = await UserServiceRefresh.refresh(refreshToken);
       res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true});
       return res.status(200).send(user_data);
     }
     else{
-      return res.status(404).send('user not login');
+      return res.status(404).send('Boyle bir kullnici bulunamadi');
     }
   }
 
