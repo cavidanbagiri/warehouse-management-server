@@ -85,8 +85,8 @@ class UserServiceLogin{
         status_code: find_user.dataValues.UserStatusModel.dataValues.status_code,
         projectId: find_user.projectId,
         username: find_user.firstName.charAt(0).toUpperCase() + find_user.firstName.slice(1) + ' '+find_user.lastName.charAt(0).toUpperCase() + find_user.lastName.slice(1),
-        status_name: find_user.dataValues.UserStatusModel.dataValues.status_name,
-        profileImage: await this.getProfileImage(find_user.id)
+        profileImage: await this.getProfileImage(find_user.id),
+        status_name: find_user.dataValues.UserStatusModel.dataValues.status_name
       }
       const tokens = TokenService.generateToken(find_user_data_for_token);
 
