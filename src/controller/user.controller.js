@@ -61,10 +61,18 @@ class UserController{
   // User Logout
   static async userLogout(req, res, next){
     const {refreshToken} = req.cookies;
-    const token = UserServiceLogout.userLogout(refreshToken);
-    res.clearCookie('refreshToken');
-    console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
-    return res.send(token);
+    if(!refreshToken){
+      return res.status(404).send('Boyle bir kullnici bulunamadi');
+    }
+    else if(refreshToken){
+      const token = UserServiceLogout.userLogout(refreshToken);
+      res.clearCookie('refreshToken');
+      console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
+      return res.send(token);
+    }
+    else{
+      return res.status(404).send('Boyle bir kullnici bulunamadi');
+    }
   }
 
 
