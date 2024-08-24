@@ -11,8 +11,7 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  console.log('if work')
-  // sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   console.log('else work')
   sequelize = new Sequelize(process.env.DB_PRODUCTION_NAME, process.env.DB_PRODUCTION_USER, process.env.DB_PRODUCTION_PASSWORD, {
