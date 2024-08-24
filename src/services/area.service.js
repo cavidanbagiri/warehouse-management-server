@@ -26,7 +26,7 @@ class FetchAreaService {
     static async getAreas(projectId) {
         const selectQuery = AreaQueries.selectQuery();
         let query = '';
-        if(projectId == 13){
+        if(projectId == 1){
             query = `${selectQuery} order by "AreaModels"."createdAt" asc`;
         }
         else{
@@ -55,7 +55,7 @@ class FetchAreaService {
 		left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
         left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
         `;
-        if(projectId == 13){
+        if(projectId == 1){
             
         }
         else{
@@ -84,7 +84,7 @@ class FetchAreaService {
 		left join "MaterialCodeModels" on "MaterialCodeModels".id = "WarehouseModels"."materialCodeId"
         left join "ProjectModels" on "ProjectModels".id = "WarehouseModels"."projectId"
         `;
-        if(projectId == 13){
+        if(projectId == 1){
 
         }
         else{

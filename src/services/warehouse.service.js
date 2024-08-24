@@ -70,7 +70,7 @@ class FetchWarehouseDataService {
     static async fetchWarehouseData(projectId) {
         const select_query = WarehouseQueries.selectQuery();
         let query = '';
-        if(projectId == 13){
+        if(projectId == 1){
             query = `${select_query} 
             order by "WarehouseModels"."createdAt" asc`
         }
@@ -86,7 +86,7 @@ class FetchWarehouseDataService {
     static async getTypeCount(projectId) {
         let data = [];
         let query = '';
-        if(projectId == 13){
+        if(projectId == 1){
             query = `select type, count(qty) from "WarehouseModels"  group by type`;
         }
         else{

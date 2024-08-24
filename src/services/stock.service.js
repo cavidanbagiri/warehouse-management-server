@@ -33,7 +33,7 @@ class FetchStockService {
         const select_query = StockQueries.selectQuery();
         let query = '';
 
-        if(projectId == 13){
+        if(projectId == 1){
             query = `${select_query}
             order by "StockModels"."createdAt" asc    
             `;
