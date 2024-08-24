@@ -49,7 +49,7 @@ class UserController{
     tryCatch(
       UserServiceLogin.userLogin(user_data)
       .then((respond)=>{
-        res.cookie('refreshToken', respond.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'lax'});
+        res.cookie('refreshToken', respond.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'none'});
         console.log('login token ___________>>>>>>>>>>>>> refreshtoken : ', respond.refresh);
         return res.status(200).send(respond);
       }).catch(err=>{
@@ -61,23 +61,10 @@ class UserController{
   // User Logout
   static async userLogout(req, res, next){
     const {refreshToken} = req.cookies;
-    if(!refreshToken){
-      return res.status(404).send('Boyle bir kullnici bulunamadi');
-    }
-    else if(refreshToken){
-      const token = await UserServiceLogout.userLogout(refreshToken);
-      res.clearCookie('refreshToken', {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'none'});
-      console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
-      return res.json(token);
-    }
-    else{
-      return res.status(404).send('Boyle bir kullnici bulunamadi');
-    }
-  
-    // const token = UserServiceLogout.userLogout(refreshToken);
-    // res.clearCookie('refreshToken');
-    // console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
-    // return res.send(token);
+    const token = UserServiceLogout.userLogout(refreshToken);
+    res.clearCookie('refreshToken');
+    console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
+    return res.send(token);
   }
 
 
@@ -87,7 +74,7 @@ class UserController{
     if(refreshToken){
       const user_data = await UserServiceRefresh.refresh(refreshToken);
 
-      res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'lax'});
+      res.cookie('refreshToken', user_data.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'none'});
       return res.status(200).send(user_data);
     }
     else{
