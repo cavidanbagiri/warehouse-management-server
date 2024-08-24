@@ -61,10 +61,18 @@ class UserController{
   // User Logout
   static async userLogout(req, res, next){
     const {refreshToken} = req.cookies;
-    const token = UserServiceLogout.userLogout(refreshToken);
-    res.clearCookie('refreshToken');
-    console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
-    return res.send(token);
+    if(!refreshToken){
+      return res.status(404).send('Authentication Error');
+    }
+    else if(refreshToken){
+      const token = await UserServiceLogout.userLogout(refreshToken);
+      res.clearCookie('refreshToken', {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'none'});
+      console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
+      return res.json(token);
+    }
+    else{
+      return res.status(404).send('Authentication Error');
+    }
   }
 
 
