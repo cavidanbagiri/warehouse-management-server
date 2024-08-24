@@ -65,10 +65,10 @@ class UserController{
       return res.status(404).send('Authentication Error');
     }
     else if(refreshToken){
-      const token = UserServiceLogout.userLogout(refreshToken);
+      const token = await UserServiceLogout.userLogout(refreshToken);
       res.clearCookie('refreshToken');
       console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
-      return res.send(token);
+      return res.json(token);
     }
     else{
       return res.status(404).send('Authentication Error');
