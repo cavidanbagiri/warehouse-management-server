@@ -62,7 +62,7 @@ class UserController{
   static async userLogout(req, res, next){
     const {refreshToken} = req.cookies;
     if(!refreshToken){
-      return res.status(404).send('Boyle bir kullnici bulunamadi');
+      return res.status(404).send('Authentication Error');
     }
     else if(refreshToken){
       const token = UserServiceLogout.userLogout(refreshToken);
@@ -71,7 +71,7 @@ class UserController{
       return res.send(token);
     }
     else{
-      return res.status(404).send('Boyle bir kullnici bulunamadi');
+      return res.status(404).send('Authentication Error');
     }
   }
 
