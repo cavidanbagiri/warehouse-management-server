@@ -50,7 +50,6 @@ class UserController{
       UserServiceLogin.userLogin(user_data)
       .then((respond)=>{
         res.cookie('refreshToken', respond.refresh, {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'none'});
-        console.log('login token ___________>>>>>>>>>>>>> refreshtoken : ', respond.refresh);
         return res.status(200).send(respond);
       }).catch(err=>{
         next(err);
@@ -67,7 +66,6 @@ class UserController{
     else if(refreshToken){
       const token = await UserServiceLogout.userLogout(refreshToken);
       res.clearCookie('refreshToken', {maxAge:60 * 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: 'none'});
-      console.log('logout token ___________>>>>>>>>>>>>> refreshtoken : ', refreshToken);
       return res.json(token);
     }
     else{

@@ -193,7 +193,6 @@ class FilterWarehouseDataService {
     static async filterWarehouseData(data) {
         const query = this.convertToSql(data);
         const respond = await sequelize.query(query, {  });
-        console.log('respond is : ', respond);
         return respond[0];
     }
 
@@ -308,9 +307,6 @@ class ReceiveToStockService {
                         createdById: data.userId
                     })
                     await result.save();
-                }
-                else {
-                    console.log('enter else');
                 }
             }
         }

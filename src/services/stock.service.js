@@ -128,7 +128,6 @@ class GetByIdService {
 class GetDatasByIdsService {
 
     static async getDataByIds(ids) {
-        console.log('coming ids is : ', ids);
         const return_data = [];
         for (let i of ids) {
             const result = await StockModels.findByPk(i, {
@@ -169,7 +168,6 @@ class ProvideStockService {
             return_data.push(result);
             const result2 = await this.addArea(data, i);
         }
-        console.log('object : ', return_data);
         return return_data;
 
     }

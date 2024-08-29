@@ -185,7 +185,6 @@ class OrderedService {
     }
 
     static async filterOrdereds(query) {
-        console.log('query is : ', query);
         const row_query = `select id, 
         INITCAP(CONCAT("OrderedModels"."firstName", ' ', "OrderedModels"."lastName")) as username
         from "OrderedModels"
@@ -202,7 +201,6 @@ class RowInformClassService {
 
         let result = null;
         if (module === 'warehouse') {
-            console.log('warehouse id work');
             result = await this.getWarehouseInformation(row_id);
         }
         else if (module === 'stock') {

@@ -44,7 +44,6 @@ class WarehouseController {
                         return res.status(200).json(respond);
                     })
                     .catch((err) => {
-                        console.log('fetch warehouse error : ', err);
                         next(err);
                     })
             )
@@ -99,7 +98,6 @@ class WarehouseController {
                     return res.status(200).json(respond);
                 })
                 .catch((err) => {
-                    console.log('get type error : ', err);
                     next(err);
                 })
         )
@@ -107,14 +105,12 @@ class WarehouseController {
 
     static async filterWarehouseData(req, res, next) {
         const filtered_query = req.query;
-        console.log('warehouse filter is : ', filtered_query);
         tryCatch(
             await FilterWarehouseDataService.filterWarehouseData(filtered_query)
                 .then((respond) => {
                     return res.status(200).json(respond);
                 })
                 .catch((err) => {
-                    console.log('get type error : ', err);
                     next(err);
                 })
         )

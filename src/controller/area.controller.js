@@ -37,7 +37,6 @@ class AreaController {
                     return res.status(200).json(respond);
                 })
                 .catch((err) => {
-                    console.log('get type error : ', err);
                     next(err);
                 })
         )
@@ -51,7 +50,6 @@ class AreaController {
                     return res.status(201).json({ msg: 'Basariyla Guncellendi', data: respond });
                 }).catch((err) => {
                     {
-                        console.error(err.message)
                         next(err);
                     }
                 })
@@ -66,7 +64,6 @@ class AreaController {
                     return res.status(201).json({ msg: 'Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
-                        console.error(err.message)
                         next(err);
                     }
                 })
@@ -103,7 +100,6 @@ class AreaController {
                     return res.status(201).json({ msg: 'Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
-                        console.error(err.message)
                         next(err);
                     }
                 })
@@ -118,7 +114,6 @@ class AreaController {
                     return res.status(201).json({ msg: 'Basariyla Tamamlandi', data: respond });
                 }).catch((err) => {
                     {
-                        console.error(err.message)
                         next(err);
                     }
                 })

@@ -102,7 +102,6 @@ class FilterAreaDataService {
     static async filterAreaData(data) {
         const query = this.convertToSql(data);
         const respond = await sequelize.query(query);
-        console.log('object : ', respond[0]);
         return respond[0];
     }
 
@@ -146,7 +145,6 @@ class FilterAreaDataService {
         query += where_query;
         query += ' order by "AreaModels"."createdAt" asc'
 
-        console.log('coming filter area models query is : ', query);
 
         return query;
     }
@@ -184,7 +182,6 @@ class UpdateAreaService {
         `;
         const respond = await sequelize.query(query);
         const result = await AreaModels.findByPk(data.id);
-        console.log('coming  is : ', result);
         return result;
     }
 }
